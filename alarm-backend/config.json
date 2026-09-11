@@ -1,0 +1,37 @@
+{
+  "nvr": {
+    "ip": "192.168.1.64",
+    "port": 8000,
+    "username": "admin",
+    "password": "STSXY304",
+    "login_mode": 2,
+    "device_model": "iDS-6716NX-I/H",
+    "device_name": "DeepinMind"
+  },
+  "alarm_mode": "deploy",
+  "reconnect": {
+    "interval_seconds": 10,
+    "max_retries": 2
+  },
+  "listen": {
+    "host": "0.0.0.0",
+    "port": 7200
+  },
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "storage": {
+    "db_path": "data/alarms.db",
+    "picture_dir": "data/pictures"
+  },
+  "event_filter_keywords": [
+    "防护",
+    "反光衣",
+    "安全帽",
+    "PPE",
+    "未穿",
+    "behavior",
+    "AI"
+  ]
+}

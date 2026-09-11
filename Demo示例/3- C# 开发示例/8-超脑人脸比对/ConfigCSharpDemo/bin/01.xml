@@ -1,0 +1,22 @@
+<FaceAppendData version="2.0" xmlns="http://www.hikvision.com/ver20/XMLSchema">
+<bornTime>2014-12-12T00:00:00Z</bornTime>
+<name>zhangmoumou</name>
+<sex>female</sex>
+<province>11</province>
+<city>01</city>
+<certificateType>officerID</certificateType>
+<certificateNumber>1123123123</certificateNumber>
+<PersonInfoExtendList>
+<PersonInfoExtend>
+<id>1</id>
+<enable>false</enable>
+<name>1</name>
+<value>1</value>
+</PersonInfoExtend><PersonInfoExtend>
+<id>2</id>
+<enable>false</enable>
+<name></name>
+<value></value>
+</PersonInfoExtend>
+</PersonInfoExtendList>
+</FaceAppendData>

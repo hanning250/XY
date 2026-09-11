@@ -1,0 +1,8 @@
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\bin\NVRCsharpDemo.exe
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\bin\NVRCsharpDemo.pdb
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.csprojResolveAssemblyReference.cache
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.MainWindow.resources
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.Properties.Resources.resources
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.csproj.GenerateResource.Cache
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.exe
+E:\SVN\1_PJ03TD20240511084_2024年第三方支持日常资料开发\Q2季度Demo整改\HCNetSDK\C#\win64\3- C# 开发示例\5-图片查找下载\NVRCsharpDemo\obj\x64\Release\NVRCsharpDemo.pdb

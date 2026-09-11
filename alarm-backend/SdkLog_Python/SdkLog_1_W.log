@@ -1,0 +1,1468 @@
+[2026-09-11 16:15:09.469][DBG] CCoreGlobalCtrlBase::LoadDSo, HPR_LoadDSo Succ, Path[C:/Users/hn/Desktop/HCNetSDKV6.1.11.30_build20260805_Win64_ZH/alarm-backend/lib/zlib1.dll], hHandleRet[1598750720]
+[2026-09-11 16:15:09.469][INF] The COM:HCCoreBase ver is 6.1.4.15, 2020_03_05. Async:1.
+[2026-09-11 16:15:09.469][INF] The COM:Core ver is 6.1.11.30, 2026_08_05. Async:1.
+[2026-09-11 16:15:09.469][INF] This HCNetSDK ver is 6.1.11.30 Ver 2026_08_05.
+[2026-09-11 16:15:09.469][INF] COM_Login dev 192.168.1.64:8000.
+[2026-09-11 16:15:09.469][INF] dwTotalNum[2048]
+[2026-09-11 16:15:09.489][INF] Private connect 192.168.1.64:8000 sock=1452 this=0xae4eb8f4 cmd=0x10000 port=61114 user=0
+[2026-09-11 16:15:09.489][INF] LogonDev1 in[192.168.1.64:8000]
+[2026-09-11 16:15:09.534][ERR] PRO_RecvProData_NewMemory pRecv->uiDvrStatus[16777315] is not QULIFIED(1)
+[2026-09-11 16:15:09.536][INF] GetUserMgr()->CreatePullUser[0], byHttps[0]
+[2026-09-11 16:15:09.536][DBG] LoginAadaptive, ret, nUserID[0]
+[2026-09-11 16:15:09.550][INF] COM_Login, Private Login SUCC
+[2026-09-11 16:15:09.550][INF] Login[mode=2] success, dev 192.168.1.64:8000, UserID=0
+[2026-09-11 16:15:09.552][DBG] CComBase::Load, Load szDllPath[C:/Users/hn/Desktop/HCNetSDKV6.1.11.30_build20260805_Win64_ZH/alarm-backend/lib/HCNetSDKCom/HCAlarm.dll] SUCC
+[2026-09-11 16:15:09.552][INF] The COM:HCAlarm ver is 6.1.11.30, 2026_08_05.
+[2026-09-11 16:15:09.553][INF] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 port=61115 user=0
+[2026-09-11 16:15:09.555][INF] [SendCommandWithRecv] linkId=ae4eb8f4, cmd=0x111021
+[2026-09-11 16:15:09.674][DBG] CISAPIUser::Start[1]
+[2026-09-11 16:15:09.674][INF] [1]CISAPIUser::Login
+[2026-09-11 16:15:09.674][DBG] CCoreGlobalCtrl::GetHCNetUtilsAPI, new HCNetUtilsAPI SUCC
+[2026-09-11 16:15:09.674][INF] The HCNetUtils ver is 1.3.0.101, 2023_02_16 release. The HCNetUtils is static version.
+[2026-09-11 16:15:09.674][DBG] CCoreGlobalCtrl::GetHCNetUtilsAPI, Init, SUCC, m_pHCNetUtilsAPI[-1397862656]
+[2026-09-11 16:15:09.674][DBG] [0]CHttpClientSession::Start, SUCC
+[2026-09-11 16:15:09.674][DBG] NET_HTTPCLIENT_Create, Create SUCC, iHandle[0]
+[2026-09-11 16:15:09.674][DBG] [0]CHttpClientSession::SetHttpParam, ENUM_HTTP_CONNECT_TIMEOUT, m_dwConnectTimeOut[5000]
+[2026-09-11 16:15:09.674][DBG] [0]CHttpClientSession::SetHttpParam, ENUM_HTTP_SEND_TIMEOUT, m_dwSendTimeOut[5000]
+[2026-09-11 16:15:09.675][DBG] [0]CHttpClientSession::CreateLink, CoreBase_CreateLinkEx, pLink[0xAE4EC060], bUseMemPool[1], m_wHttpPort[8000]
+[2026-09-11 16:15:09.676][ERR] [0]CLinkBase::RecvData DoRealRecvEx fail
+[2026-09-11 16:15:09.676][ERR] [0]CHttpClientSession::RecvHttpHeader, CoreBase_RecvDataByLink Failed, dwRecvLen[0], Error[9]
+[2026-09-11 16:15:09.676][ERR] [0]CHttpClientSession::HttpShortLinkEx, RecvHttpHeader Failed, Error[9]
+[2026-09-11 16:15:09.676][DBG] [0]CHttpClientSession::HttpShortLinkEx, m_bFirst = HPR_TRUE, Call HttpShortLinkEx Again
+[2026-09-11 16:15:09.689][DBG] [0]CHttpClientSession::CreateLink, CoreBase_CreateLinkEx, pLink[0xAE4EC060], bUseMemPool[1], m_wHttpPort[8000]
+[2026-09-11 16:15:09.689][ERR] [0]CLinkBase::RecvData DoRealRecvEx fail
+[2026-09-11 16:15:09.689][ERR] [0]CHttpClientSession::RecvHttpHeader, CoreBase_RecvDataByLink Failed, dwRecvLen[0], Error[9]
+[2026-09-11 16:15:09.689][ERR] [0]CHttpClientSession::HttpShortLinkEx, RecvHttpHeader Failed, Error[9]
+[2026-09-11 16:15:09.690][ERR] [0]NET_HTTPCLIENT_ShortLinkExchange, Failed, Error[9]
+[2026-09-11 16:15:09.690][DBG] [0]CHttpClientSession::SetHttpParam, ENUM_HTTP_SEND_TIMEOUT, m_dwSendTimeOut[5000]
+[2026-09-11 16:15:09.690][ERR] CISAPIHttp::HttpRequest, Failed, Error[9]
+[2026-09-11 16:15:09.690][ERR] CISAPIHttp::GetSessionLoginCap, HttpRequest, extract <sessionID>
+[2026-09-11 16:15:09.690][ERR] [0]CHttpClientSession::CloseLink, m_pLink == NULL
+[2026-09-11 16:15:09.690][DBG] [0]CHttpClientSession::Stop, Finish
+[2026-09-11 16:15:09.690][DBG] [0]NET_HTTPCLIENT_Destroy, SUCC
+[2026-09-11 16:15:09.690][DBG] [0]CISAPIHttp::Stop, m_lHttpHandle[0], with return[1]
+[2026-09-11 16:15:09.690][ERR] [1]CISAPIUser::Login, Failed, m_lHttpHandle[-1]
+[2026-09-11 16:15:09.690][ERR] CMemberMgrBase::AllocIndex2, MemberStart Failed, iIndex[1]
+[2026-09-11 16:15:09.690][DBG] CISAPIUser::Stop[1]
+[2026-09-11 16:15:09.690][DBG] CUserMgr::UnRegisterHeartProxy[1]
+[2026-09-11 16:15:09.690][INF] GetUserMgr()->CreateISAPIUser[-1]
+[2026-09-11 16:15:09.690][DBG] LoginAadaptive, ret, nUserID[-1]
+[2026-09-11 16:17:09.556][INF] Private connect 192.168.1.64:8000 sock=1636 this=0xae4ec060 cmd=0x10200 port=61459 user=0
+[2026-09-11 16:18:01.069][INF] Alarm[0] IP[192.168.1.64] data_len[143078] alarm_len[143078] status[74]
+[2026-09-11 16:18:04.128][INF] Alarm[0] IP[192.168.1.64] data_len[135634] alarm_len[135634] status[74]
+[2026-09-11 16:18:07.137][INF] Alarm[0] IP[192.168.1.64] data_len[158927] alarm_len[158927] status[74]
+[2026-09-11 16:18:16.350][INF] Alarm[0] IP[192.168.1.64] data_len[148234] alarm_len[148234] status[74]
+[2026-09-11 16:18:19.396][INF] Alarm[0] IP[192.168.1.64] data_len[147114] alarm_len[147114] status[74]
+[2026-09-11 16:18:22.458][INF] Alarm[0] IP[192.168.1.64] data_len[154265] alarm_len[154265] status[74]
+[2026-09-11 16:18:28.728][INF] Alarm[0] IP[192.168.1.64] data_len[152738] alarm_len[152738] status[74]
+[2026-09-11 16:18:31.669][INF] Alarm[0] IP[192.168.1.64] data_len[156514] alarm_len[156514] status[74]
+[2026-09-11 16:19:08.626][INF] Alarm[0] IP[192.168.1.64] data_len[138579] alarm_len[138579] status[74]
+[2026-09-11 16:19:09.592][INF] Private connect 192.168.1.64:8000 sock=704 this=0xae4ec060 cmd=0x10200 port=61855 user=0
+[2026-09-11 16:20:16.154][INF] Alarm[0] IP[192.168.1.64] data_len[129967] alarm_len[129967] status[74]
+[2026-09-11 16:21:09.608][INF] Private connect 192.168.1.64:8000 sock=1600 this=0xae4ec060 cmd=0x10200 port=62160 user=0
+[2026-09-11 16:23:09.641][INF] Private connect 192.168.1.64:8000 sock=1484 this=0xae4ec060 cmd=0x10200 port=62504 user=0
+[2026-09-11 16:25:09.645][INF] Private connect 192.168.1.64:8000 sock=1656 this=0xae4ec060 cmd=0x10200 port=62794 user=0
+[2026-09-11 16:27:09.665][INF] Private connect 192.168.1.64:8000 sock=1656 this=0xae4ec060 cmd=0x10200 port=62989 user=0
+[2026-09-11 16:29:09.686][INF] Private connect 192.168.1.64:8000 sock=704 this=0xae4ec060 cmd=0x10200 port=63164 user=0
+[2026-09-11 16:30:58.932][INF] [0] CArmingSession::TimeoutCallBack Create ReConnectThread SUCC
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] reconnect thread start!
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] reconnect thread stop link end!
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] reconnect thread bReconnect[1] m_bAlarmStop[0]
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] reconnect thread CallBackAlarmException start!
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] reconnect thread CallBackAlarmException end!
+[2026-09-11 16:30:58.932][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:02.436][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:02.436][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:02.436][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:02.436][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:07.441][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:10.943][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:10.943][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:10.943][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:10.943][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:14.713][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:31:14.713][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:14.713][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:31:14.713][ERR] [0]Exception changes 1
+[2026-09-11 16:31:14.713][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:31:15.947][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:19.453][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:19.453][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:19.453][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:19.453][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:24.465][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:27.977][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:27.977][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:27.977][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:27.977][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:32.984][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:36.486][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:36.486][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:36.486][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:36.486][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:41.502][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:45.012][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:45.012][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:45.012][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:45.012][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:50.013][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:31:53.523][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:31:53.523][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:31:53.523][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:31:53.523][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:31:58.528][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:02.041][ERR] Private connect 192.168.1.64:8000 sock=768 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:02.041][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:02.041][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:02.041][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:07.042][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:10.551][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:10.551][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:10.551][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:10.551][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:15.554][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:19.055][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:19.055][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:19.055][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:19.055][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:24.066][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:27.581][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:27.581][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:27.581][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:27.581][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:32.582][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:36.085][ERR] Private connect 192.168.1.64:8000 sock=1672 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:36.085][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:36.085][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:36.085][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:41.094][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:44.600][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:44.600][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:44.600][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:44.600][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:49.614][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:32:53.123][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:32:53.123][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:32:53.123][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:32:53.123][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:32:58.132][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:01.642][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:01.642][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:01.642][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:01.642][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:06.656][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:10.161][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:10.161][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:10.161][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:10.161][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:14.746][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:33:14.746][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:14.746][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:33:14.746][ERR] [0]Exception changes 1
+[2026-09-11 16:33:14.746][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:33:15.168][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:18.671][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:18.671][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:18.671][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:18.671][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:23.682][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:27.192][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:27.192][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:27.192][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:27.192][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:32.205][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:35.709][ERR] Private connect 192.168.1.64:8000 sock=1672 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:35.709][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:35.709][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:35.709][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:40.709][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:44.223][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:44.223][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:44.223][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:44.223][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:49.228][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:33:52.736][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:33:52.736][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:33:52.736][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:33:52.736][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:33:57.738][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:01.246][ERR] Private connect 192.168.1.64:8000 sock=1672 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:01.246][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:01.246][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:01.246][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:06.253][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:09.762][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:09.762][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:09.762][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:09.762][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:14.763][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:18.265][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:18.265][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:18.265][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:18.265][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:23.275][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:26.785][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:26.785][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:26.785][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:26.785][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:31.800][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:35.301][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:35.301][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:35.301][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:35.301][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:40.307][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:43.822][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:43.822][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:43.822][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:43.822][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:48.835][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:34:52.348][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:34:52.348][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:34:52.348][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:34:52.348][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:34:57.363][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:00.870][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:00.870][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:00.870][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:00.870][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:05.885][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:09.396][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:09.396][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:09.396][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:09.396][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:14.401][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:14.778][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:35:14.778][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:14.778][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:35:14.778][ERR] [0]Exception changes 1
+[2026-09-11 16:35:14.778][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:35:17.916][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:17.916][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:17.916][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:17.916][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:22.925][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:26.430][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:26.430][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:26.430][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:26.430][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:31.430][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:34.938][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:34.938][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:34.938][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:34.938][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:39.953][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:43.465][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:43.465][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:43.466][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:43.466][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:48.479][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:35:51.982][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:35:51.982][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:35:51.982][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:35:51.982][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:35:56.991][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:00.499][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:00.499][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:00.499][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:00.499][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:05.508][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:09.023][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:09.023][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:09.023][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:09.023][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:14.037][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:17.545][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:17.545][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:17.545][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:17.545][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:22.556][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:26.060][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:26.060][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:26.060][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:26.060][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:31.075][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:34.586][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:34.586][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:34.586][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:34.586][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:39.592][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:43.101][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:43.101][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:43.101][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:43.101][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:48.112][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:36:51.614][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:36:51.614][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:36:51.614][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:36:51.614][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:36:56.627][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:00.135][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:00.135][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:00.135][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:00.135][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:05.137][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:08.637][ERR] Private connect 192.168.1.64:8000 sock=1676 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:08.637][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:08.637][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:08.637][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:13.650][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:14.809][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:37:14.809][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:14.809][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:37:14.809][ERR] [0]Exception changes 1
+[2026-09-11 16:37:14.809][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:37:17.160][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:17.160][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:17.160][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:17.160][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:22.169][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:25.676][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:25.676][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:25.676][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:25.676][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:30.680][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:34.192][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:34.192][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:34.192][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:34.192][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:39.193][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:42.701][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:42.701][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:42.701][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:42.701][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:47.701][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:51.210][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:51.210][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:51.210][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:51.210][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:37:56.212][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:37:59.727][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:37:59.727][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:37:59.727][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:37:59.727][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:04.731][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:08.243][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:08.243][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:08.243][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:08.243][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:13.257][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:16.770][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:16.770][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:16.770][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:16.770][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:21.778][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:25.286][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:25.286][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:25.286][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:25.286][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:30.298][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:33.808][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:33.808][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:33.808][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:33.808][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:38.817][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:42.330][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:42.330][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:42.330][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:42.330][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:47.332][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:50.841][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:50.841][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:50.841][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:50.841][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:38:55.854][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:38:59.359][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:38:59.359][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:38:59.359][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:38:59.359][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:04.373][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:07.887][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:07.887][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:07.887][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:07.887][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:12.901][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:14.821][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:39:14.821][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:14.821][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:39:14.821][ERR] [0]Exception changes 1
+[2026-09-11 16:39:14.821][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:39:16.413][ERR] Private connect 192.168.1.64:8000 sock=1652 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:16.413][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:16.413][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:16.413][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:21.427][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:24.935][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:24.935][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:24.935][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:24.935][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:29.938][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:33.449][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:33.449][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:33.449][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:33.449][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:38.460][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:41.965][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:41.965][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:41.965][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:41.965][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:46.969][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:50.480][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:50.480][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:50.480][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:50.480][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:39:55.489][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:39:59.002][ERR] Private connect 192.168.1.64:8000 sock=1624 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:39:59.002][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:39:59.002][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:39:59.002][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:04.012][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:07.518][ERR] Private connect 192.168.1.64:8000 sock=1624 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:07.518][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:07.518][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:07.518][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:12.519][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:16.029][ERR] Private connect 192.168.1.64:8000 sock=1624 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:16.029][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:16.029][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:16.029][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:21.034][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:24.548][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:24.548][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:24.548][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:24.548][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:29.562][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:33.066][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:33.066][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:33.066][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:33.066][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:38.080][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:41.588][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:41.588][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:41.588][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:41.588][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:46.599][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:50.105][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:50.105][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:50.105][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:50.105][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:40:55.115][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:40:58.630][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:40:58.630][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:40:58.630][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:40:58.630][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:03.646][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:07.147][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:07.147][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:07.147][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:07.147][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:12.159][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:14.855][ERR] Private connect 192.168.1.64:8000 sock=1704 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:41:14.855][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:14.855][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:41:14.855][ERR] [0]Exception changes 1
+[2026-09-11 16:41:14.855][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:41:15.667][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:15.667][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:15.667][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:15.667][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:20.681][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:24.191][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:24.191][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:24.191][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:24.191][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:29.196][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:32.706][ERR] Private connect 192.168.1.64:8000 sock=824 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:32.706][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:32.706][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:32.706][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:37.709][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:41.214][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:41.214][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:41.214][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:41.214][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:46.230][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:49.732][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:49.732][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:49.732][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:49.732][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:41:54.747][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:41:58.261][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:41:58.261][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:41:58.261][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:41:58.261][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:03.272][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:06.780][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:06.780][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:06.780][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:06.780][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:11.784][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:15.294][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:15.294][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:15.294][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:15.294][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:20.296][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:23.803][ERR] Private connect 192.168.1.64:8000 sock=916 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:23.803][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:23.803][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:23.803][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:28.809][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:32.314][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:32.314][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:32.314][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:32.314][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:37.318][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:40.819][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:40.819][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:40.819][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:40.819][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:45.825][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:49.336][ERR] Private connect 192.168.1.64:8000 sock=1620 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:49.336][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:49.336][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:49.336][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:42:54.337][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:42:57.841][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:42:57.841][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:42:57.841][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:42:57.841][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:02.850][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:06.359][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:06.359][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:06.359][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:06.359][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:11.360][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:14.862][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:14.862][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:14.862][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:14.862][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:14.877][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:43:14.877][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:14.877][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:43:14.877][ERR] [0]Exception changes 1
+[2026-09-11 16:43:14.877][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:43:19.865][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:23.376][ERR] Private connect 192.168.1.64:8000 sock=1676 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:23.376][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:23.376][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:23.376][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:28.388][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:31.895][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:31.895][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:31.895][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:31.895][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:36.903][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:40.410][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:40.410][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:40.410][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:40.410][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:45.410][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:48.922][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:48.922][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:48.922][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:48.922][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:43:53.931][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:43:57.441][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:43:57.441][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:43:57.441][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:43:57.441][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:02.442][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:05.956][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:05.956][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:05.956][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:05.956][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:10.956][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:14.462][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:14.462][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:14.462][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:14.462][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:19.464][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:22.974][ERR] Private connect 192.168.1.64:8000 sock=1624 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:22.974][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:22.974][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:22.974][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:27.984][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:31.492][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:31.492][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:31.492][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:31.492][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:36.507][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:40.021][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:40.021][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:40.021][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:40.021][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:45.029][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:48.543][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:48.543][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:48.543][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:48.543][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:44:53.556][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:44:57.060][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:44:57.060][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:44:57.060][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:44:57.060][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:02.066][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:05.567][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:05.567][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:05.567][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:05.567][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:10.580][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:14.087][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:14.087][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:14.087][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:14.087][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:14.897][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:45:14.897][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:14.897][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:45:14.897][ERR] [0]Exception changes 1
+[2026-09-11 16:45:14.897][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:45:19.102][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:22.610][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:22.610][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:22.610][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:22.610][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:27.620][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:31.131][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:31.131][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:31.131][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:31.131][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:36.139][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:39.644][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:39.644][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:39.644][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:39.644][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:44.659][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:48.160][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:48.160][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:48.160][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:48.160][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:45:53.165][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:45:56.671][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:45:56.671][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:45:56.671][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:45:56.671][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:01.676][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:05.179][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:05.179][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:05.179][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:05.179][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:10.185][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:13.685][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:13.685][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:13.685][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:13.685][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:18.700][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:22.202][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:22.202][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:22.202][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:22.202][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:27.212][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:30.727][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:30.727][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:30.727][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:30.727][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:35.731][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:39.238][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:39.238][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:39.238][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:39.238][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:44.252][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:47.758][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:47.758][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:47.758][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:47.758][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:46:52.771][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:46:56.277][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:46:56.277][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:46:56.277][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:46:56.277][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:01.288][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:04.799][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:04.799][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:04.799][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:04.799][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:09.801][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:13.314][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:13.314][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:13.314][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:13.314][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:14.920][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:47:14.920][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:14.920][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:47:14.920][ERR] [0]Exception changes 1
+[2026-09-11 16:47:14.920][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:47:18.325][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:21.840][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:21.840][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:21.840][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:21.840][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:26.853][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:30.367][ERR] Private connect 192.168.1.64:8000 sock=1712 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:30.367][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:30.367][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:30.367][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:35.380][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:38.887][ERR] Private connect 192.168.1.64:8000 sock=1712 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:38.887][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:38.887][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:38.887][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:43.889][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:47.402][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:47.402][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:47.402][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:47.402][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:47:52.414][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:47:55.918][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:47:55.918][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:47:55.918][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:47:55.918][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:00.927][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:04.434][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:04.434][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:04.434][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:04.434][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:09.438][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:12.949][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:12.949][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:12.949][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:12.949][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:17.957][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:21.471][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:21.471][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:21.471][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:21.471][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:26.476][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:29.988][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:29.988][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:29.988][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:29.988][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:34.998][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:38.512][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:38.512][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:38.512][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:38.512][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:43.516][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:47.028][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:47.028][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:47.028][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:47.028][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:48:52.043][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:48:55.544][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:48:55.544][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:48:55.544][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:48:55.544][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:00.549][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:04.051][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:04.051][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:04.051][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:04.051][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:09.055][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:12.557][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:12.557][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:12.557][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:12.557][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:14.942][ERR] Private connect 192.168.1.64:8000 sock=412 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:49:14.942][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:14.942][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:49:14.942][ERR] [0]Exception changes 1
+[2026-09-11 16:49:14.942][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:49:17.557][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:21.063][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:21.063][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:21.063][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:21.063][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:26.067][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:29.573][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:29.573][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:29.573][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:29.573][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:34.585][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:38.089][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:38.089][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:38.089][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:38.089][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:43.093][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:46.602][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:46.602][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:46.602][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:46.602][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:49:51.609][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:49:55.113][ERR] Private connect 192.168.1.64:8000 sock=1704 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:49:55.113][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:49:55.113][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:49:55.113][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:00.118][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:03.629][ERR] Private connect 192.168.1.64:8000 sock=1628 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:03.629][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:03.629][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:03.629][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:08.639][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:12.151][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:12.151][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:12.151][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:12.151][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:17.156][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:20.658][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:20.658][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:20.658][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:20.658][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:25.669][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:29.180][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:29.180][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:29.180][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:29.180][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:34.193][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:37.701][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:37.701][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:37.701][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:37.701][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:42.704][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:46.215][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:46.215][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:46.215][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:46.215][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:51.224][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:50:54.729][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:50:54.729][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:50:54.729][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:50:54.729][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:50:59.744][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:03.259][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:03.259][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:03.259][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:03.259][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:08.265][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:11.780][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:11.780][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:11.780][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:11.780][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:14.948][ERR] Private connect 192.168.1.64:8000 sock=1724 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:51:14.948][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:14.948][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:51:14.948][ERR] [0]Exception changes 1
+[2026-09-11 16:51:14.948][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:51:16.790][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:20.296][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:20.296][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:20.296][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:20.296][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:25.298][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:28.801][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:28.801][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:28.801][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:28.801][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:33.805][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:37.318][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:37.318][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:37.318][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:37.318][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:42.329][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:45.832][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:45.832][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:45.832][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:45.832][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:50.838][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:51:54.347][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:51:54.347][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:51:54.347][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:51:54.347][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:51:59.348][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:02.852][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:02.852][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:02.852][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:02.852][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:07.858][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:11.363][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:11.363][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:11.363][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:11.363][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:16.367][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:19.881][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:19.881][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:19.881][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:19.881][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:24.891][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:28.398][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:28.398][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:28.398][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:28.398][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:33.406][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:36.915][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:36.915][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:36.915][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:36.915][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:41.928][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:45.442][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:45.442][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:45.442][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:45.442][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:50.449][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:52:53.959][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:52:53.959][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:52:53.959][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:52:53.959][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:52:58.963][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:02.471][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:02.471][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:02.471][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:02.471][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:07.472][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:10.983][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:10.983][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:10.983][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:10.983][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:14.980][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:53:14.980][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:14.980][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:53:14.980][ERR] [0]Exception changes 1
+[2026-09-11 16:53:14.980][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:53:15.995][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:19.509][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:19.509][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:19.509][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:19.509][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:24.510][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:28.025][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:28.025][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:28.025][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:28.025][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:33.028][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:36.535][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:36.535][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:36.535][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:36.535][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:41.540][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:45.055][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:45.055][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:45.055][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:45.055][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:50.067][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:53:53.580][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:53:53.580][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:53:53.580][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:53:53.580][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:53:58.590][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:02.099][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:02.099][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:02.099][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:02.099][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:07.105][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:10.613][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:10.613][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:10.613][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:10.613][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:15.626][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:19.131][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:19.131][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:19.131][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:19.131][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:24.137][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:27.652][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:27.652][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:27.652][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:27.652][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:32.652][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:36.157][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:36.157][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:36.157][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:36.157][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:41.163][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:44.664][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:44.664][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:44.664][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:44.664][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:49.668][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:54:53.171][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:54:53.171][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:54:53.171][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:54:53.171][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:54:58.176][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:01.678][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:01.678][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:01.678][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:01.678][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:06.686][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:10.191][ERR] Private connect 192.168.1.64:8000 sock=1616 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:10.191][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:10.191][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:10.191][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:14.994][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4ec060 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:55:14.994][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:14.994][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:55:14.994][ERR] [0]Exception changes 1
+[2026-09-11 16:55:14.994][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:55:15.197][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:18.710][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:18.710][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:18.710][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:18.710][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:23.712][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:27.219][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:27.219][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:27.219][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:27.219][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:32.226][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:35.729][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:35.729][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:35.729][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:35.729][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:40.742][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:44.254][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:44.254][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:44.254][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:44.254][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:49.259][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:55:52.760][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:55:52.760][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:55:52.760][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:55:52.760][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:55:57.765][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:01.278][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:01.278][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:01.278][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:01.278][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:06.289][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:09.791][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:09.791][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:09.791][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:09.791][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:14.803][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:18.313][ERR] Private connect 192.168.1.64:8000 sock=1524 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:18.313][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:18.313][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:18.313][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:23.327][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:26.836][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:26.836][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:26.836][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:26.836][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:31.850][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:35.362][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:35.362][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:35.362][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:35.362][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:40.373][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:43.878][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:43.878][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:43.878][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:43.878][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:48.880][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:56:52.386][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:56:52.386][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:56:52.386][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:56:52.386][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:56:57.388][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:00.889][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:00.889][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:00.889][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:00.889][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:05.895][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:09.402][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:09.402][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:09.402][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:09.402][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:14.404][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:15.026][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:57:15.026][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:15.026][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:57:15.026][ERR] [0]Exception changes 1
+[2026-09-11 16:57:15.026][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:57:17.908][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:17.908][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:17.908][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:17.908][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:22.913][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:26.426][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:26.426][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:26.426][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:26.426][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:31.428][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:34.928][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:34.928][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:34.928][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:34.928][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:39.944][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:43.455][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:43.455][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:43.455][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:43.455][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:48.459][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:57:51.963][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:57:51.963][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:57:51.963][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:57:51.963][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:57:56.968][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:00.471][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:00.471][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:00.471][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:00.471][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:05.477][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:08.987][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:08.987][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:08.987][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:08.987][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:13.989][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:17.492][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:17.492][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:17.492][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:17.492][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:22.505][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:26.008][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:26.008][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:26.008][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:26.008][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:31.012][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:34.518][ERR] Private connect 192.168.1.64:8000 sock=1704 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:34.518][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:34.518][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:34.518][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:39.531][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:43.032][ERR] Private connect 192.168.1.64:8000 sock=1704 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:43.032][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:43.032][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:43.032][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:48.032][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:58:51.543][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:58:51.543][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:58:51.543][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:58:51.543][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:58:56.555][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:00.062][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:00.062][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:00.062][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:00.062][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:05.073][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:08.575][ERR] Private connect 192.168.1.64:8000 sock=1728 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:08.575][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:08.575][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:08.575][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:13.590][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:15.054][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 16:59:15.054][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:15.054][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 16:59:15.054][ERR] [0]Exception changes 1
+[2026-09-11 16:59:15.054][DBG]  CUser::ProcessException[0]
+[2026-09-11 16:59:17.094][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:17.094][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:17.094][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:17.094][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:22.105][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:25.609][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:25.609][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:25.609][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:25.609][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:30.617][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:34.123][ERR] Private connect 192.168.1.64:8000 sock=428 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:34.123][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:34.123][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:34.123][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:39.134][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:42.649][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:42.649][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:42.649][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:42.649][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:47.652][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:51.164][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:51.164][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:51.164][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:51.164][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 16:59:56.170][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 16:59:59.677][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 16:59:59.677][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 16:59:59.677][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 16:59:59.677][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:04.687][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:08.196][ERR] Private connect 192.168.1.64:8000 sock=1712 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:08.196][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:08.196][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:08.196][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:13.202][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:16.705][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:16.705][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:16.705][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:16.705][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:21.708][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:25.210][ERR] Private connect 192.168.1.64:8000 sock=1668 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:25.210][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:25.210][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:25.210][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:30.211][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:33.713][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:33.713][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:33.713][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:33.713][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:38.726][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:42.238][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:42.238][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:42.238][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:42.238][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:47.251][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:50.756][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:50.756][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:50.756][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:50.756][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:00:55.759][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:00:59.274][ERR] Private connect 192.168.1.64:8000 sock=1732 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:00:59.274][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:00:59.274][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:00:59.274][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:04.276][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:07.785][ERR] Private connect 192.168.1.64:8000 sock=1732 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:07.785][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:07.785][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:07.785][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:12.798][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:15.070][ERR] Private connect 192.168.1.64:8000 sock=1680 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 17:01:15.070][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:15.070][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 17:01:15.070][ERR] [0]Exception changes 1
+[2026-09-11 17:01:15.070][DBG]  CUser::ProcessException[0]
+[2026-09-11 17:01:16.306][ERR] Private connect 192.168.1.64:8000 sock=1736 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:16.306][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:16.306][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:16.306][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:21.314][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:24.819][ERR] Private connect 192.168.1.64:8000 sock=1532 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:24.819][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:24.819][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:24.819][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:29.822][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:33.327][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:33.327][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:33.327][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:33.327][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:38.330][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:41.836][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:41.836][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:41.836][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:41.836][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:46.839][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:50.345][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:50.345][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:50.345][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:50.345][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:01:55.348][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:01:58.849][ERR] Private connect 192.168.1.64:8000 sock=1688 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:01:58.849][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:01:58.849][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:01:58.849][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:03.854][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:07.363][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:07.363][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:07.363][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:07.363][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:12.370][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:15.870][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:15.870][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:15.870][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:15.870][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:20.876][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:24.386][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:24.386][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:24.386][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:24.386][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:29.392][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:32.905][ERR] Private connect 192.168.1.64:8000 sock=1748 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:32.905][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:32.905][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:32.905][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:37.916][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:41.419][ERR] Private connect 192.168.1.64:8000 sock=820 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:41.419][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:41.419][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:41.419][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:46.429][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:49.943][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:49.943][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:49.943][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:49.943][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:02:54.948][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:02:58.453][ERR] Private connect 192.168.1.64:8000 sock=1752 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:02:58.453][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:02:58.453][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:02:58.453][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:03.460][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:06.965][ERR] Private connect 192.168.1.64:8000 sock=1752 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:06.965][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:06.965][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:06.965][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:11.976][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:15.094][ERR] Private connect 192.168.1.64:8000 sock=1760 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 17:03:15.094][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:15.094][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 17:03:15.094][ERR] [0]Exception changes 1
+[2026-09-11 17:03:15.094][DBG]  CUser::ProcessException[0]
+[2026-09-11 17:03:15.483][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:15.483][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:15.483][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:15.483][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:20.493][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:23.999][ERR] Private connect 192.168.1.64:8000 sock=1768 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:23.999][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:23.999][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:23.999][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:29.004][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:32.519][ERR] Private connect 192.168.1.64:8000 sock=1772 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:32.519][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:32.519][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:32.519][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:37.528][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:41.036][ERR] Private connect 192.168.1.64:8000 sock=1776 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:41.036][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:41.036][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:41.036][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:46.040][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:49.550][ERR] Private connect 192.168.1.64:8000 sock=1780 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:49.550][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:49.550][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:49.550][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:03:54.553][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:03:58.054][ERR] Private connect 192.168.1.64:8000 sock=1752 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:03:58.054][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:03:58.054][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:03:58.054][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:03.067][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:06.570][ERR] Private connect 192.168.1.64:8000 sock=1764 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:06.570][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:06.570][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:06.570][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:11.578][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:15.091][ERR] Private connect 192.168.1.64:8000 sock=1764 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:15.091][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:15.091][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:15.091][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:20.096][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:23.603][ERR] Private connect 192.168.1.64:8000 sock=1768 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:23.603][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:23.603][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:23.603][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:28.615][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:32.127][ERR] Private connect 192.168.1.64:8000 sock=1756 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:32.127][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:32.127][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:32.127][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:37.141][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:40.657][ERR] Private connect 192.168.1.64:8000 sock=1756 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:40.657][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:40.657][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:40.657][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:45.664][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:49.170][ERR] Private connect 192.168.1.64:8000 sock=1756 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:49.170][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:49.170][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:49.170][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:04:54.181][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:04:57.684][ERR] Private connect 192.168.1.64:8000 sock=1788 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:04:57.684][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:04:57.684][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:04:57.684][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:02.699][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:06.203][ERR] Private connect 192.168.1.64:8000 sock=1756 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:06.203][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:06.203][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:06.203][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:11.215][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:14.728][ERR] Private connect 192.168.1.64:8000 sock=1788 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:14.728][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:14.728][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:14.728][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:15.117][ERR] Private connect 192.168.1.64:8000 sock=412 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 17:05:15.117][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:15.117][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 17:05:15.117][ERR] [0]Exception changes 1
+[2026-09-11 17:05:15.117][DBG]  CUser::ProcessException[0]
+[2026-09-11 17:05:19.739][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:23.255][ERR] Private connect 192.168.1.64:8000 sock=1788 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:23.255][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:23.255][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:23.255][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:28.269][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:31.772][ERR] Private connect 192.168.1.64:8000 sock=1788 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:31.772][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:31.772][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:31.772][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:36.786][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:40.289][ERR] Private connect 192.168.1.64:8000 sock=1756 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:40.289][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:40.289][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:40.289][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:45.295][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:48.801][ERR] Private connect 192.168.1.64:8000 sock=1708 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:48.801][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:48.801][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:48.801][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:05:53.815][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:05:57.328][ERR] Private connect 192.168.1.64:8000 sock=1768 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:05:57.328][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:05:57.328][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:05:57.328][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:02.342][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:05.845][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:05.845][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:05.845][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:05.845][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:10.852][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:14.367][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:14.367][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:14.367][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:14.367][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:19.370][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:22.884][ERR] Private connect 192.168.1.64:8000 sock=1744 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:22.884][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:22.884][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:22.884][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:27.898][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:31.402][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:31.402][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:31.402][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:31.402][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:36.403][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:39.906][ERR] Private connect 192.168.1.64:8000 sock=644 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:39.906][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:39.906][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:39.906][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:44.912][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:48.424][ERR] Private connect 192.168.1.64:8000 sock=1744 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:48.424][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:48.424][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:48.424][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:06:53.433][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:06:56.937][ERR] Private connect 192.168.1.64:8000 sock=1740 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:06:56.937][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:06:56.937][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:06:56.937][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:01.945][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:05.451][ERR] Private connect 192.168.1.64:8000 sock=1784 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:05.451][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:05.451][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:05.451][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:10.460][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:13.972][ERR] Private connect 192.168.1.64:8000 sock=1764 this=0xae4ec060 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:13.972][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:13.972][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:13.972][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:15.136][ERR] Private connect 192.168.1.64:8000 sock=1788 this=0xae4eb8f4 cmd=0x10200 sys_err=10060, timeout= 5000 port=0 user=0
+[2026-09-11 17:07:15.136][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:15.136][DBG] [0]CUser::SendHeartWithExceptCB network error[7], times[1]
+[2026-09-11 17:07:15.136][ERR] [0]Exception changes 1
+[2026-09-11 17:07:15.136][DBG]  CUser::ProcessException[0]
+[2026-09-11 17:07:18.978][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:22.488][ERR] Private connect 192.168.1.64:8000 sock=1780 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:22.488][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:22.488][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:22.488][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:27.497][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:31.000][ERR] Private connect 192.168.1.64:8000 sock=1784 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:31.000][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:31.000][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:31.000][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:36.005][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:39.512][ERR] Private connect 192.168.1.64:8000 sock=1772 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:39.512][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:39.512][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:39.512][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:44.525][DBG] Alarm chan [0] LinkToDVR!
+[2026-09-11 17:07:48.033][ERR] Private connect 192.168.1.64:8000 sock=1792 this=0xae4eb8f4 cmd=0x111021 sys_err=10060, timeout= 3500 port=0 user=0
+[2026-09-11 17:07:48.033][DBG] Link_CreateLink, pLink->Start failed
+[2026-09-11 17:07:48.033][ERR] [0] CArmingSession::LinkToDVR, CreateLink Failed, Cmd[1118241], Reconnect ID[-1]
+[2026-09-11 17:07:48.033][ERR] ReConnect Alarm chan [0] LinkToDVR failed![err:7]
+[2026-09-11 17:07:53.043][DBG] Alarm chan [0] LinkToDVR!

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>防护服告警监控</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --danger: #f87171;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "PingFang SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    h1 { margin: 0; font-size: 22px; }
+    .stats { display: flex; gap: 12px; flex-wrap: wrap; }
+    .stat {
+      background: var(--card);
+      padding: 10px 14px;
+      border-radius: 10px;
+      min-width: 120px;
+    }
+    .stat label { display: block; color: var(--muted); font-size: 12px; }
+    .stat strong { font-size: 20px; }
+    .toolbar {
+      padding: 16px 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    button, label.toggle {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid #475569;
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    button:hover { border-color: var(--accent); }
+    .status-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      display: inline-block; margin-right: 6px;
+      background: var(--muted);
+    }
+    .status-dot.online { background: var(--ok); }
+    main { padding: 0 24px 24px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #334155;
+      text-align: left;
+      vertical-align: top;
+      font-size: 14px;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .badge.ppe { background: rgba(248,113,113,.2); color: var(--danger); }
+    .badge.normal { background: rgba(148,163,184,.2); color: var(--muted); }
+    .payload {
+      max-width: 360px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .empty {
+      text-align: center;
+      padding: 48px;
+      color: var(--muted);
+    }
+    img.thumb {
+      width: 72px;
+      height: 54px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid #475569;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>防护服告警监控</h1>
+      <div><span id="wsDot" class="status-dot"></span><span id="wsStatus">WebSocket 连接中...</span></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><label>总告警</label><strong id="totalCount">0</strong></div>
+      <div class="stat"><label>防护服相关</label><strong id="ppeCount">0</strong></div>
+      <div class="stat"><label>SDK 状态</label><strong id="sdkState">-</strong></div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <label class="toggle"><input type="checkbox" id="ppeOnly" checked /> 仅显示防护服告警</label>
+    <button id="refreshBtn">刷新列表</button>
+  </div>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>时间</th>
+          <th>类型</th>
+          <th>通道</th>
+          <th>设备 IP</th>
+          <th>标签</th>
+          <th>抓拍</th>
+          <th>原始内容</th>
+        </tr>
+      </thead>
+      <tbody id="alarmBody">
+        <tr><td colspan="8" class="empty">加载中...</td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const alarmBody = document.getElementById("alarmBody");
+    const ppeOnly = document.getElementById("ppeOnly");
+    const wsDot = document.getElementById("wsDot");
+    const wsStatus = document.getElementById("wsStatus");
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text ?? "";
+      return div.innerHTML;
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        alarmBody.innerHTML = '<tr><td colspan="8" class="empty">暂无告警</td></tr>';
+        return;
+      }
+      alarmBody.innerHTML = items.map(item => {
+        const badge = item.is_ppe_related
+          ? '<span class="badge ppe">防护服</span>'
+          : '<span class="badge normal">其他</span>';
+        const pics = (item.picture_urls || []).map(url =>
+          `<a href="${url}" target="_blank"><img class="thumb" src="${url}" alt="pic" /></a>`
+        ).join(" ");
+        return `<tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.event_time || item.created_at)}</td>
+          <td>${escapeHtml(item.event_type)}</td>
+          <td>${item.channel_no ?? "-"}</td>
+          <td>${escapeHtml(item.device_ip)}</td>
+          <td>${badge}</td>
+          <td>${pics || "-"}</td>
+          <td><div class="payload" title="${escapeHtml(item.raw_payload)}">${escapeHtml(item.raw_payload)}</div></td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function loadStats() {
+      const res = await fetch("/api/stats");
+      const data = await res.json();
+      document.getElementById("totalCount").textContent = data.total;
+      document.getElementById("ppeCount").textContent = data.ppe_related;
+    }
+
+    async function loadStatus() {
+      const res = await fetch("/api/status");
+      const data = await res.json();
+      document.getElementById("sdkState").textContent = data.alarm_service?.state || "-";
+    }
+
+    async function loadAlarms() {
+      const query = ppeOnly.checked ? "?ppe_only=true&limit=100" : "?limit=100";
+      const res = await fetch("/api/alarms" + query);
+      const data = await res.json();
+      renderRows(data);
+    }
+
+    function connectWs() {
+      const protocol = location.protocol === "https:" ? "wss" : "ws";
+      const ws = new WebSocket(`${protocol}://${location.host}/ws/alarms`);
+      ws.onopen = () => {
+        wsDot.classList.add("online");
+        wsStatus.textContent = "WebSocket 已连接，等待新告警";
+      };
+      ws.onclose = () => {
+        wsDot.classList.remove("online");
+        wsStatus.textContent = "WebSocket 已断开，5 秒后重连...";
+        setTimeout(connectWs, 5000);
+      };
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === "alarm") {
+          loadAlarms();
+          loadStats();
+        }
+      };
+    }
+
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      loadAlarms();
+      loadStats();
+      loadStatus();
+    });
+    ppeOnly.addEventListener("change", loadAlarms);
+
+    loadAlarms();
+    loadStats();
+    loadStatus();
+    connectWs();
+  </script>
+</body>
+</html>

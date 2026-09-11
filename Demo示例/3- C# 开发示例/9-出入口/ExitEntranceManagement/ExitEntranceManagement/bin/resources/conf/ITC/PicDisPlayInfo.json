@@ -1,0 +1,16 @@
+{
+  "DisplayInfo": {
+    "QRCodeImg": [{
+      "QRCodeBase64": "${QRCodeBase64}",
+      "QRCodeFileName": "weixin.jpg",
+      "paymentType": "WeChatPay",
+      "QRContent": ""
+    }]
+  },
+  "sence": ${sence},
+  "amounts": ${amounts},
+  "license": "${license}",
+  "notice":  "${notice}",
+  "enterTime": "2024-08-03 12:30:00",
+  "leaveTime": "2024-08-03 17:30:00"
+}
