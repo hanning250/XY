@@ -1,21 +1,20 @@
 {
-  "nvr": {
-    "ip": "192.168.1.64",
-    "port": 8000,
-    "username": "admin",
-    "password": "STSXY304",
-    "login_mode": 2,
-    "device_model": "iDS-6716NX-I/H",
-    "device_name": "DeepinMind"
+  "isup": {
+    "listen_ip": "0.0.0.0",
+    "register_port": 7660,
+    "alarm_port": 7661,
+    "protocol": "tcp",
+    "reuse_cms_port": false,
+    "use_thread_pool": false,
+    "access_security": 0,
+    "register_listen_mode": 0,
+    "keep_alive_sec": 30,
+    "timeout_count": 3,
+    "allowed_device_ids": []
   },
-  "alarm_mode": "deploy",
   "reconnect": {
     "interval_seconds": 10,
-    "max_retries": 2
-  },
-  "listen": {
-    "host": "0.0.0.0",
-    "port": 7200
+    "max_retries": 0
   },
   "api": {
     "host": "0.0.0.0",
@@ -33,5 +32,16 @@
     "未穿",
     "behavior",
     "AI"
-  ]
+  ],
+  "aiop_type_labels": {
+    "0": "未穿反光衣",
+    "1": "未戴安全帽"
+  },
+  "_comment_isup": "ISUP 是设备主动连服务器，所以这里没有设备账号密码，只有本机监听地址和端口。设备侧要填：平台IP=本机IP、注册端口=register_port、报警端口=alarm_port、设备ID、密钥。",
+  "_comment_register_port": "设备注册端口（CMS），设备连上来注册用。",
+  "_comment_alarm_port": "报警/图片接收端口，必须和注册端口不同（除非 reuse_cms_port=true）。",
+  "_comment_protocol": "报警通道协议：tcp / udp / mqtt。老版本用 tcp，ISUP5.0 用 mqtt。",
+  "_comment_access_security": "接入安全模式：0-兼容(任意版本都能接，先用这个) 1-仅4.0以下 2-仅4.0以上(安全模式)。",
+  "_comment_allowed_device_ids": "留空=允许所有设备接入。填了就只接收列表里的设备ID。",
+  "_comment_aiop_type_labels": "AI开放平台算法返回的 obj.type 是整数类别号，在这里映射成中文名（键为类别号字符串）。留空则 event_type 显示为 aiop_type_N。可用 GET /ISAPI/Intelligent/AIOpenPlatform/algorithmModel/management?format=json 查看设备模型包的 label 描述。"
 }

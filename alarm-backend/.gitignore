@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# 虚拟环境
+.venv/
+venv/
+env/
+
+# 运行时数据（告警库、图片、SDK 日志）
+data/
+SdkLog_Python/
+IsupLog_Python/
+
+# SDK 运行库：体积大（约 32MB），由 setup_libs.py 从 new_sdk 拷进来，不入库
+lib_isup/
+# 老的 NET SDK 运行库（已切到 ISUP，保留目录备查，但不要提交）
+lib/
+
+# 诊断/测试产物
+isup_doctor_out/
+aiop_doctor_out/
+_test_tmp/
+
+# IDE
+.idea/
+.vscode/

@@ -1,0 +1,19 @@
+[project]
+name = "alarm-backend"
+version = "2.0.0"
+description = "海康 ISUP（EHome）防护服告警后端：接收设备上报的告警与图片，提供 REST API"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.0.0",
+]
+
+# 这是应用（不是要被别人 import 的库），所以故意不写 [build-system]
+# 和 [project.scripts]：
+#   - 不需要打包发布
+#   - 启动方式是 python start.py / python main.py，不走 console_scripts
+#
+# ISUP SDK 的 DLL 在 lib_isup/（用 python setup_libs.py 从 new_sdk 拷过来），
+# 属于原生库不是 Python 包，所以不放进 dependencies。
