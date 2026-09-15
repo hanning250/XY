@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ISUP 防护服告警监控</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --border: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #38bdf8;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header, .toolbar, main { padding: 16px 20px; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
+    }
+    h1 { margin: 0; font-size: 20px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .stat {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .stat label { display: block; color: var(--muted); font-size: 12px; }
+    .stat strong { font-size: 22px; }
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    button {
+      background: var(--accent);
+      color: #082f49;
+      border: 0;
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: var(--muted); font-weight: 600; }
+    .empty { text-align: center; color: var(--muted); padding: 24px; }
+    .status-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background: var(--warn);
+    }
+    .status-dot.ok { background: var(--ok); }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: #1e293b;
+      color: #cbd5e1;
+    }
+    .tag.ppe { background: #14532d; color: #bbf7d0; }
+    .thumb {
+      width: 72px;
+      height: 48px;
+      object-fit: cover;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      margin-right: 4px;
+    }
+    pre {
+      max-width: 360px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>ISUP 防护服告警监控</h1>
+      <div class="stats">
+        <div class="stat"><label>总告警</label><strong id="totalCount">0</strong></div>
+        <div class="stat"><label>防护服相关</label><strong id="ppeCount">0</strong></div>
+        <div class="stat"><label>已注册设备</label><strong id="deviceCount">0</strong></div>
+        <div class="stat"><label>ISUP 状态</label><strong id="sdkState">-</strong></div>
+      </div>
+    </div>
+    <div><span id="sseDot" class="status-dot"></span><span id="sseStatus">SSE 连接中...</span></div>
+  </header>
+
+  <div class="toolbar">
+    <button id="refreshBtn" type="button">刷新列表</button>
+    <button id="testBtn" type="button">测试推送</button>
+    <span id="lastRefresh" style="color:var(--muted);font-size:12px;"></span>
+  </div>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>时间</th>
+          <th>类型</th>
+          <th>通道</th>
+          <th>设备</th>
+          <th>标签</th>
+          <th>抓拍</th>
+          <th>摘要</th>
+        </tr>
+      </thead>
+      <tbody id="alarmBody">
+        <tr><td colspan="8" class="empty">加载中...</td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <script>
+    const alarmBody = document.getElementById("alarmBody");
+    const sseDot = document.getElementById("sseDot");
+    const sseStatus = document.getElementById("sseStatus");
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text ?? "";
+      return div.innerHTML;
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        alarmBody.innerHTML = '<tr><td colspan="8" class="empty">暂无告警</td></tr>';
+        return;
+      }
+      alarmBody.innerHTML = items.map((item) => {
+        const pics = (item.picture_urls || [])
+          .map((url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener"><img class="thumb" src="${escapeHtml(url)}" alt="抓拍" loading="lazy" /></a>`)
+          .join("");
+        const tagClass = item.is_ppe_related ? "tag ppe" : "tag";
+        return `<tr>
+          <td>${item.id}</td>
+          <td>${escapeHtml(item.event_time || item.created_at || "")}</td>
+          <td>${escapeHtml(item.event_type_label || item.event_type || "")}</td>
+          <td>${item.channel_no ?? "-"}</td>
+          <td>${escapeHtml(item.device_serial || item.device_ip || "")}</td>
+          <td><span class="${tagClass}">${escapeHtml(item.ppe_label || "")}</span></td>
+          <td>${pics || "-"}</td>
+          <td><pre>${escapeHtml(item.summary || item.detail_text || "")}</pre></td>
+        </tr>`;
+      }).join("");
+    }
+
+    async function loadStats() {
+      const [statsRes, statusRes] = await Promise.all([
+        fetch("/api/stats"),
+        fetch("/api/status"),
+      ]);
+      const stats = await statsRes.json();
+      const status = await statusRes.json();
+      document.getElementById("totalCount").textContent = stats.total ?? 0;
+      document.getElementById("ppeCount").textContent = stats.ppe_related ?? 0;
+      document.getElementById("deviceCount").textContent =
+        status.alarm_service?.registered_devices ?? 0;
+      document.getElementById("sdkState").textContent =
+        status.alarm_service?.state_label || status.alarm_service?.state || "-";
+    }
+
+    async function loadAlarms() {
+      try {
+        const res = await fetch("/api/alarms");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const items = await res.json();
+        renderRows(items);
+        await loadStats();
+        document.getElementById("lastRefresh").textContent =
+          "更新于 " + new Date().toLocaleTimeString();
+      } catch (err) {
+        alarmBody.innerHTML = `<tr><td colspan="8" class="empty">加载失败: ${escapeHtml(err.message)}</td></tr>`;
+      }
+    }
+
+    async function triggerTestAlarm() {
+      const res = await fetch("/api/alarms/test", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok || !data.ok) throw new Error("测试推送失败");
+      await loadAlarms();
+    }
+
+    function connectSse() {
+      const source = new EventSource("/api/alarms/stream");
+      source.onopen = () => {
+        sseDot.classList.add("ok");
+        sseStatus.textContent = "SSE 已连接";
+      };
+      source.onerror = () => {
+        sseDot.classList.remove("ok");
+        sseStatus.textContent = "SSE 断开，重试中...";
+      };
+      source.onmessage = (event) => {
+        if (!event.data) return;
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload.type === "alarm") loadAlarms();
+        } catch (_) {}
+      };
+    }
+
+    document.getElementById("refreshBtn").addEventListener("click", loadAlarms);
+    document.getElementById("testBtn").addEventListener("click", () => {
+      triggerTestAlarm().catch((err) => alert(err.message));
+    });
+    loadAlarms();
+    connectSse();
+    setInterval(loadAlarms, 8000);
+  </script>
+</body>
+</html>
