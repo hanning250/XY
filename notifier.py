@@ -13,10 +13,6 @@ class AlarmNotifier:
     def set_loop(self, loop):
         self._loop = loop
 
-    @property
-    def client_count(self) -> int:
-        return len(self._subscribers)
-
     def subscribe(self) -> asyncio.Queue:
         queue = asyncio.Queue()
         self._subscribers.add(queue)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """从告警 JSON/XML 或设备 URL 拉取抓拍图片。"""
-import hashlib
 import os
 import re
 import urllib.error
@@ -10,6 +9,7 @@ from typing import Iterable, List, Optional
 from xml.etree import ElementTree
 
 from event_parser import make_picture_name
+from isapi_client import digest_auth_header
 
 URL_PATTERN = re.compile(
     r"https?://[^\s\"'<>]+|/(?:ISAPI|SDK|doc)/[^\s\"'<>]+",
@@ -26,18 +26,6 @@ URL_FIELD_HINTS = (
     "snapurl",
     "backgroundimage",
 )
-
-
-def _digest_auth_header(method: str, uri: str, www_auth: str, user: str, pwd: str) -> str:
-    auth = dict(re.findall(r'(\w+)="?([^",]+)"?', www_auth.split(" ", 1)[1]))
-    realm, nonce = auth["realm"], auth["nonce"]
-    ha1 = hashlib.md5(f"{user}:{realm}:{pwd}".encode()).hexdigest()
-    ha2 = hashlib.md5(f"{method}:{uri}".encode()).hexdigest()
-    response = hashlib.md5(f"{ha1}:{nonce}:00000001:xyz:auth:{ha2}".encode()).hexdigest()
-    return (
-        f'Digest username="{user}", realm="{realm}", nonce="{nonce}", uri="{uri}", '
-        f'algorithm=MD5, qop=auth, nc=00000001, cnonce="xyz", response="{response}"'
-    )
 
 
 def _normalize_url(url: str, device_ip: Optional[str]) -> Optional[str]:
@@ -102,7 +90,7 @@ def _download_once(url: str, username: str, password: str, timeout: int = 12) ->
     except urllib.error.HTTPError as exc:
         if exc.code != 401:
             raise
-        hdr = _digest_auth_header("GET", path, exc.headers.get("WWW-Authenticate", ""), username, password)
+        hdr = digest_auth_header("GET", path, exc.headers.get("WWW-Authenticate", ""), username, password)
         request2 = urllib.request.Request(url, headers={"Authorization": hdr})
         with urllib.request.urlopen(request2, timeout=timeout) as resp:
             return resp.read()
@@ -148,7 +136,7 @@ def fetch_alarm_pictures(
     password = auth.get("password", "")
 
     for index, pic_bytes in enumerate(embedded_pictures or []):
-        saved = save_picture_bytes(picture_dir, "isup", index, pic_bytes)
+        saved = save_picture_bytes(picture_dir, "embedded", index, pic_bytes)
         if saved:
             paths.append(saved)
             print(f"[picture-fetcher] 内嵌图片已保存 {os.path.basename(saved)} ({len(pic_bytes)} bytes)")

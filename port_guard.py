@@ -2,7 +2,6 @@
 """启动前检查端口占用，避免重复运行 main.py 导致 10048 错误。"""
 import re
 import subprocess
-import sys
 
 
 def _run_netstat():
@@ -82,15 +81,3 @@ def ensure_ports_available(ports: list[int], force: bool = False) -> bool:
     print("  2) 或执行: taskkill /PID <进程号> /F")
     print("  3) 或强制重启: python main.py --force")
     return False
-
-
-def collect_required_ports(config, api_only: bool) -> list[int]:
-    ports = [int(config.get("api", {}).get("port", 8080))]
-    if config.get("isup", {}).get("enabled", True) and not api_only:
-        isup = config.get("isup", {})
-        ams = isup.get("ams", {})
-        ports.append(int(isup.get("cms", {}).get("port", 7660)))
-        ports.append(int(ams.get("port", 7200)))
-        if ams.get("use_cms_port", True):
-            ports.append(int(ams.get("route_port") or ams.get("port", 7200)))
-    return sorted(set(ports))

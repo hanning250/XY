@@ -12,8 +12,12 @@ _ROOT = os.path.dirname(os.path.abspath(__file__))
 _CONFIG_PATH = os.path.join(_ROOT, "config.json")
 
 
-def load_config() -> dict:
+def load_config(required: bool = False) -> dict:
     if not os.path.isfile(_CONFIG_PATH):
+        if required:
+            raise FileNotFoundError(
+                f"未找到 config.json，请在 { _ROOT } 下创建并配置 ISUP 平台参数。"
+            )
         return {}
     with open(_CONFIG_PATH, "r", encoding="utf-8") as fp:
         return json.load(fp)

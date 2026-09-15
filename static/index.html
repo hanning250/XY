@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ISUP 防护服告警监控</title>
+  <title>告警监控</title>
   <style>
     :root {
       color-scheme: light dark;
@@ -23,7 +23,7 @@
       background: var(--bg);
       color: var(--text);
     }
-    header, .toolbar, main { padding: 16px 20px; }
+    header, main { padding: 16px 20px; }
     header {
       display: flex;
       justify-content: space-between;
@@ -32,48 +32,6 @@
       background: var(--panel);
     }
     h1 { margin: 0; font-size: 20px; }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(120px, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-    }
-    .stat {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-    }
-    .stat label { display: block; color: var(--muted); font-size: 12px; }
-    .stat strong { font-size: 22px; }
-    .toolbar {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-    button {
-      background: var(--accent);
-      color: #082f49;
-      border: 0;
-      border-radius: 8px;
-      padding: 8px 14px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    th, td {
-      border-bottom: 1px solid var(--border);
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: top;
-    }
-    th { color: var(--muted); font-weight: 600; }
-    .empty { text-align: center; color: var(--muted); padding: 24px; }
     .status-dot {
       display: inline-block;
       width: 10px;
@@ -83,69 +41,51 @@
       background: var(--warn);
     }
     .status-dot.ok { background: var(--ok); }
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 12px;
-      background: #1e293b;
-      color: #cbd5e1;
+    #sseStatus { color: var(--muted); font-size: 13px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
     }
-    .tag.ppe { background: #14532d; color: #bbf7d0; }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px 10px;
+      text-align: left;
+      vertical-align: middle;
+    }
+    th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+    .empty { text-align: center; color: var(--muted); padding: 32px; }
     .thumb {
-      width: 72px;
-      height: 48px;
+      display: block;
+      width: 160px;
+      max-width: 100%;
+      height: auto;
+      max-height: 120px;
       object-fit: cover;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      margin-right: 4px;
+      cursor: pointer;
     }
-    pre {
-      max-width: 360px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      margin: 0;
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .no-pic { color: var(--muted); }
   </style>
 </head>
 <body>
   <header>
-    <div>
-      <h1>ISUP 防护服告警监控</h1>
-      <div class="stats">
-        <div class="stat"><label>总告警</label><strong id="totalCount">0</strong></div>
-        <div class="stat"><label>防护服相关</label><strong id="ppeCount">0</strong></div>
-        <div class="stat"><label>已注册设备</label><strong id="deviceCount">0</strong></div>
-        <div class="stat"><label>ISUP 状态</label><strong id="sdkState">-</strong></div>
-      </div>
-    </div>
-    <div><span id="sseDot" class="status-dot"></span><span id="sseStatus">SSE 连接中...</span></div>
+    <h1>告警监控</h1>
+    <div><span id="sseDot" class="status-dot"></span><span id="sseStatus">连接中...</span></div>
   </header>
-
-  <div class="toolbar">
-    <button id="refreshBtn" type="button">刷新列表</button>
-    <button id="testBtn" type="button">测试推送</button>
-    <span id="lastRefresh" style="color:var(--muted);font-size:12px;"></span>
-  </div>
 
   <main>
     <table>
       <thead>
         <tr>
-          <th>ID</th>
-          <th>时间</th>
-          <th>类型</th>
-          <th>通道</th>
-          <th>设备</th>
-          <th>标签</th>
-          <th>抓拍</th>
-          <th>摘要</th>
+          <th>告警时间</th>
+          <th>告警类型</th>
+          <th>告警图片</th>
         </tr>
       </thead>
       <tbody id="alarmBody">
-        <tr><td colspan="8" class="empty">加载中...</td></tr>
+        <tr><td colspan="3" class="empty">加载中...</td></tr>
       </tbody>
     </table>
   </main>
@@ -161,74 +101,51 @@
       return div.innerHTML;
     }
 
-    function renderRows(items) {
-      if (!items.length) {
-        alarmBody.innerHTML = '<tr><td colspan="8" class="empty">暂无告警</td></tr>';
-        return;
-      }
-      alarmBody.innerHTML = items.map((item) => {
-        const pics = (item.picture_urls || [])
-          .map((url) => `<a href="${escapeHtml(url)}" target="_blank" rel="noopener"><img class="thumb" src="${escapeHtml(url)}" alt="抓拍" loading="lazy" /></a>`)
-          .join("");
-        const tagClass = item.is_ppe_related ? "tag ppe" : "tag";
-        return `<tr>
-          <td>${item.id}</td>
-          <td>${escapeHtml(item.event_time || item.created_at || "")}</td>
-          <td>${escapeHtml(item.event_type_label || item.event_type || "")}</td>
-          <td>${item.channel_no ?? "-"}</td>
-          <td>${escapeHtml(item.device_serial || item.device_ip || "")}</td>
-          <td><span class="${tagClass}">${escapeHtml(item.ppe_label || "")}</span></td>
-          <td>${pics || "-"}</td>
-          <td><pre>${escapeHtml(item.summary || item.detail_text || "")}</pre></td>
-        </tr>`;
-      }).join("");
+    function formatTime(item) {
+      const raw = item.event_time || item.created_at || "";
+      if (!raw) return "-";
+      const d = new Date(raw);
+      return Number.isNaN(d.getTime()) ? raw : d.toLocaleString("zh-CN");
     }
 
-    async function loadStats() {
-      const [statsRes, statusRes] = await Promise.all([
-        fetch("/api/stats"),
-        fetch("/api/status"),
-      ]);
-      const stats = await statsRes.json();
-      const status = await statusRes.json();
-      document.getElementById("totalCount").textContent = stats.total ?? 0;
-      document.getElementById("ppeCount").textContent = stats.ppe_related ?? 0;
-      document.getElementById("deviceCount").textContent =
-        status.alarm_service?.registered_devices ?? 0;
-      document.getElementById("sdkState").textContent =
-        status.alarm_service?.state_label || status.alarm_service?.state || "-";
+    function renderPicture(urls) {
+      const url = (urls || [])[0];
+      if (!url) return '<span class="no-pic">无图片</span>';
+      const safe = escapeHtml(url);
+      return `<a href="${safe}" target="_blank" rel="noopener"><img class="thumb" src="${safe}" alt="告警图片" loading="lazy" /></a>`;
+    }
+
+    function renderRows(items) {
+      if (!items.length) {
+        alarmBody.innerHTML = '<tr><td colspan="3" class="empty">暂无告警</td></tr>';
+        return;
+      }
+      alarmBody.innerHTML = items.map((item) => `<tr>
+        <td>${escapeHtml(formatTime(item))}</td>
+        <td>${escapeHtml(item.event_type_label || item.event_type || "未知")}</td>
+        <td>${renderPicture(item.picture_urls)}</td>
+      </tr>`).join("");
     }
 
     async function loadAlarms() {
       try {
         const res = await fetch("/api/alarms");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const items = await res.json();
-        renderRows(items);
-        await loadStats();
-        document.getElementById("lastRefresh").textContent =
-          "更新于 " + new Date().toLocaleTimeString();
+        renderRows(await res.json());
       } catch (err) {
-        alarmBody.innerHTML = `<tr><td colspan="8" class="empty">加载失败: ${escapeHtml(err.message)}</td></tr>`;
+        alarmBody.innerHTML = `<tr><td colspan="3" class="empty">加载失败: ${escapeHtml(err.message)}</td></tr>`;
       }
-    }
-
-    async function triggerTestAlarm() {
-      const res = await fetch("/api/alarms/test", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok || !data.ok) throw new Error("测试推送失败");
-      await loadAlarms();
     }
 
     function connectSse() {
       const source = new EventSource("/api/alarms/stream");
       source.onopen = () => {
         sseDot.classList.add("ok");
-        sseStatus.textContent = "SSE 已连接";
+        sseStatus.textContent = "实时更新已连接";
       };
       source.onerror = () => {
         sseDot.classList.remove("ok");
-        sseStatus.textContent = "SSE 断开，重试中...";
+        sseStatus.textContent = "连接断开，重试中...";
       };
       source.onmessage = (event) => {
         if (!event.data) return;
@@ -239,13 +156,9 @@
       };
     }
 
-    document.getElementById("refreshBtn").addEventListener("click", loadAlarms);
-    document.getElementById("testBtn").addEventListener("click", () => {
-      triggerTestAlarm().catch((err) => alert(err.message));
-    });
     loadAlarms();
     connectSse();
-    setInterval(loadAlarms, 8000);
+    setInterval(loadAlarms, 10000);
   </script>
 </body>
 </html>
