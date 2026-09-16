@@ -19,9 +19,6 @@ env/
 # Runtime data
 data/
 *.log
-# Local config (passwords, IPs)
-config.json
-
 # OS
 .DS_Store
 Thumbs.db

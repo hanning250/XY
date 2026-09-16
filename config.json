@@ -1,0 +1,28 @@
+{
+  "api": {
+    "host": "0.0.0.0",
+    "port": 8080
+  },
+  "http_notify": {
+    "path": "/api/hikvision/event",
+    "platform_ip": "192.168.1.100",
+    "port": 8080
+  },
+  "device_auth": {
+    "username": "admin",
+    "password": "STSXY304"
+  },
+  "storage": {
+    "db_path": "data/alarms.db",
+    "picture_dir": "data/pictures"
+  },
+  "event_filter_keywords": [
+    "防护",
+    "反光衣",
+    "安全帽",
+    "PPE",
+    "未穿",
+    "behavior",
+    "AI"
+  ]
+}
