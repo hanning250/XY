@@ -1,0 +1,77 @@
+{
+  "cms": {
+    // 注册服务器监听地址(服务器本地地址)
+    "CmsServerIP" : "192.168.1.100",
+    "CmsServerPort" : 7661,
+
+    // DAS地址（此处的IP和端口与设备网页端设置的平台IP地址和端口一致）
+    "DasServerIP" : "192.168.1.100",
+    "DasServerPort" : 7661
+  },
+
+  "ss": {
+    //图片存储服务器监听地址端口
+    "PicServerListenIP": "192.168.1.100",
+    "PicServerListenPort": 6011,
+
+    // 图片存储服务器类型：0-Tomcat，1-VRB，2-云存储，3-KMS，4-ISUP5.0
+    // ISUP5.0版本接入，选择存储服务器类型为云存储，其余版本根据设备类型不同，选择不同类型存储服务器，ISUP4.0版本接入门禁设备选择类型为KMS
+    "PicServerType": 2,
+
+    //图片存储服务器地址：IUSP5.0版本接入端口建议固定为6011
+    "PicServerIP": "192.168.1.100",
+    "PicServerPort": 6011
+
+  },
+
+  "ams": {
+    //报警服务器监听地址端口
+    "AlarmServerListenIP": "192.168.1.100",
+    "AlarmServerListenTCPPort": 7663,
+    "AlarmServerListenUDPPort": 7662,
+
+    // 报警服务器类型：0- 只支持UDP协议上报，1- 支持UDP、TCP两种协议上报（ISUP4.0） 2-MQTT(ISUP5.0)
+    // MQTT复用TCP的端口
+    "AlarmServerType": 2,
+
+    //报警服务器监听地址端口
+    "AlarmServerIP": "192.168.1.100",
+    "AlarmServerTCPPort": 7663,
+    "AlarmServerUDPPort": 7662,
+
+    // false=单行摘要，true=打印完整报警内容（含XML/JSON）
+    "AlarmPrintDetail": true,
+
+    // 告警图片保存提示节流（秒），0=每次都打印
+    "SsPicSavePrintThrottleSeconds": 30
+  },
+
+  "sms": {
+    //取流服务器监听地址端口(服务器本地地址)
+    "SmsServerListenIP": "192.168.1.100",
+    "SmsServerListenPort": 7665,
+
+    // 取流服务器地址端口（公网对接填入公网地址和端口）
+    "SmsServerIP": "192.168.1.100",
+    "SmsServerPort": 7665,
+
+    // 取流服务器监听地址端口(服务器本地地址)
+    "SmsBackServerListenIP": "192.168.1.100",
+    "SmsBackServerListenPort": 8000,
+
+    // 回放流媒体服务器地址端口（公网对接填入公网地址和端口）
+    "SmsBackServerIP": "192.168.1.100",
+    "SmsBackServerPort": 8000
+  },
+  //ISUP5.0登录秘钥 和设备端ISUP页面配置的ISUP登录秘钥保持一致
+  "ISUPKey": "STSXY304",
+
+  // 实时预览目标设备ID（留空则在多设备时手动选择）
+  "PreviewDeviceID": "HaiKang-1",
+
+  // 回放目标设备ID（留空则在多设备时手动选择）
+  "PlaybackDeviceID": "box001",
+
+  // CMS透传/控制目标设备ID（留空则使用最后上线设备，与历史行为一致）
+  "CmsDeviceID": ""
+}

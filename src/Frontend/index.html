@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XY 告警监控平台</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>XY 告警监控平台</h1>
+      <p class="subtitle">实时告警展示 · 规则识别结果</p>
+    </div>
+    <div class="status-bar">
+      <span id="ws-status" class="badge badge-offline">WebSocket 未连接</span>
+      <span id="client-count" class="badge">客户端: 0</span>
+    </div>
+  </header>
+
+  <section class="stats-grid" id="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">总告警</div>
+      <div class="stat-value" id="stat-total">0</div>
+    </div>
+    <div class="stat-card active">
+      <div class="stat-label">活跃</div>
+      <div class="stat-value" id="stat-active">0</div>
+    </div>
+    <div class="stat-card inactive">
+      <div class="stat-label">已恢复</div>
+      <div class="stat-value" id="stat-inactive">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">设备数</div>
+      <div class="stat-value" id="stat-devices">0</div>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <input type="text" id="filter-device" placeholder="设备 ID">
+    <input type="text" id="filter-rule" placeholder="规则名称">
+    <button id="btn-refresh">刷新</button>
+    <button id="btn-clear-filters">清除筛选</button>
+  </section>
+
+  <main class="layout">
+    <section class="panel">
+      <div class="panel-header">
+        <h2>告警列表</h2>
+        <span id="alarm-count">0 条</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>时间</th>
+              <th>设备</th>
+              <th>规则名称</th>
+              <th>属性</th>
+              <th>置信度</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="alarm-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel detail-panel">
+      <div class="panel-header">
+        <h2>告警详情</h2>
+        <button id="btn-delete-selected" class="btn-danger" disabled>删除当前告警</button>
+      </div>
+      <div id="alarm-detail" class="detail-content">
+        <p class="placeholder">点击列表中的告警查看详情</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
