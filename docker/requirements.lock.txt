@@ -1,0 +1,37 @@
+# =============================================================================
+#  Python 依赖 —— Docker 锁定版本（已瘦身）
+#
+#  已移除：
+#    · imageio-ffmpeg（约 165MB；容器用系统 ffmpeg）
+#    · httpx / httpcore（仅 HttpProvider 需要；默认 file/mock）
+#    · pyyaml（源码未引用）
+#    · watchfiles / uvloop / httptools（uvicorn[standard] 额外包，生产非必须）
+# =============================================================================
+
+# --- Web 框架 ---
+fastapi==0.141.1
+starlette==1.6.0
+uvicorn==0.53.0
+python-multipart==0.0.32
+websockets==16.0
+
+# --- 数据库（SQLite + async）---
+sqlalchemy==2.0.54
+aiosqlite==0.22.1
+greenlet==3.5.6
+
+# --- 配置 ---
+pydantic==2.13.5
+pydantic-core==2.46.5
+pydantic-settings==2.15.0
+annotated-types==0.8.0
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+python-dotenv==1.2.3
+
+# --- 协议底层 ---
+anyio==4.15.1
+sniffio==1.3.1
+idna==3.19
+click==8.5.0
+h11==0.16.0

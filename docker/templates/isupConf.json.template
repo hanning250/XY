@@ -1,0 +1,74 @@
+{
+  "cms": {
+    // 注册服务器监听地址(服务器本地地址)
+    // 0.0.0.0 = 绑所有网卡，推荐
+    "CmsServerIP" : "${ISUP_LISTEN_IP:-0.0.0.0}",
+    "CmsServerPort" : ${ISUP_CMS_PORT:-7661},
+
+    // DAS地址（此处的IP和端口与设备网页端设置的平台IP地址和端口一致）
+    // ★ 这里必须填服务器真实可达 IP，设备要主动回连
+    "DasServerIP" : "${ISUP_SERVER_IP}",
+    "DasServerPort" : ${ISUP_CMS_PORT:-7661}
+  },
+
+  "ss": {
+    //图片存储服务器监听地址端口
+    "PicServerListenIP": "${ISUP_LISTEN_IP:-0.0.0.0}",
+    "PicServerListenPort": ${ISUP_SS_PORT:-6011},
+
+    // 图片存储服务器类型：0-Tomcat，1-VRB，2-云存储，3-KMS，4-ISUP5.0
+    // ISUP5.0版本接入，选择存储服务器类型为云存储
+    "PicServerType": ${ISUP_SS_TYPE:-2},
+
+    //图片存储服务器地址：ISUP5.0版本接入端口建议固定为6011
+    "PicServerIP": "${ISUP_SERVER_IP}",
+    "PicServerPort": ${ISUP_SS_PORT:-6011}
+
+  },
+
+  "ams": {
+    //报警服务器监听地址端口
+    "AlarmServerListenIP": "${ISUP_LISTEN_IP:-0.0.0.0}",
+    "AlarmServerListenTCPPort": ${ISUP_AMS_TCP_PORT:-7663},
+    "AlarmServerListenUDPPort": ${ISUP_AMS_UDP_PORT:-7662},
+
+    // 报警服务器类型：0- 只支持UDP协议上报，1- 支持UDP、TCP两种协议上报（ISUP4.0） 2-MQTT(ISUP5.0)
+    // MQTT复用TCP的端口
+    "AlarmServerType": ${ISUP_AMS_TYPE:-2},
+
+    //报警服务器监听地址端口
+    "AlarmServerIP": "${ISUP_SERVER_IP}",
+    "AlarmServerTCPPort": ${ISUP_AMS_TCP_PORT:-7663},
+    "AlarmServerUDPPort": ${ISUP_AMS_UDP_PORT:-7662}
+  },
+
+  "sms": {
+    //取流服务器监听地址端口(服务器本地地址)
+    "SmsServerListenIP": "${ISUP_LISTEN_IP:-0.0.0.0}",
+    "SmsServerListenPort": ${ISUP_SMS_PORT:-7665},
+
+    // 取流服务器地址端口（公网对接填入公网地址和端口）
+    "SmsServerIP": "${ISUP_SERVER_IP}",
+    "SmsServerPort": ${ISUP_SMS_PORT:-7665},
+
+    // 取流服务器监听地址端口(服务器本地地址)
+    "SmsBackServerListenIP": "${ISUP_LISTEN_IP:-0.0.0.0}",
+    "SmsBackServerListenPort": ${ISUP_SMS_BACK_PORT:-8000},
+
+    // 回放流媒体服务器地址端口（公网对接填入公网地址和端口）
+    "SmsBackServerIP": "${ISUP_SERVER_IP}",
+    "SmsBackServerPort": ${ISUP_SMS_BACK_PORT:-8000}
+  },
+
+  //ISUP5.0登录秘钥 和设备端ISUP页面配置的ISUP登录秘钥保持一致
+  "ISUPKey": "${ISUP_KEY}",
+
+  // 实时预览目标设备ID
+  //   留空 = 自动：单设备时用唯一在线设备；多设备时交互式提示选择
+  //   ⚠️ 这两项只是**回退**配置：实际回放/预览是按告警自带的 device_id
+  //      找登录句柄的，只有拿不到 device_id 时才会用到这里。
+  "PreviewDeviceID": "${ISUP_PREVIEW_DEVICE_ID:-}",
+
+  // 回放目标设备ID（留空同上）
+  "PlaybackDeviceID": "${ISUP_PLAYBACK_DEVICE_ID:-}"
+}

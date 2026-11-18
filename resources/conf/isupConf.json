@@ -1,0 +1,72 @@
+{
+  "cms": {
+    // 注册服务器监听地址(服务器本地地址)
+    "CmsServerIP" : "192.168.1.221",
+    "CmsServerPort" : 7661,
+
+    // DAS地址（此处的IP和端口与设备网页端设置的平台IP地址和端口一致）
+    "DasServerIP" : "192.168.1.221",
+    "DasServerPort" : 7661
+  },
+
+  "ss": {
+    //图片存储服务器监听地址端口
+    "PicServerListenIP": "192.168.1.221",
+    "PicServerListenPort": 6011,
+
+    // 图片存储服务器类型：0-Tomcat，1-VRB，2-云存储，3-KMS，4-ISUP5.0
+    // ISUP5.0版本接入，选择存储服务器类型为云存储，其余版本根据设备类型不同，选择不同类型存储服务器，ISUP4.0版本接入门禁设备选择类型为KMS
+    "PicServerType": 2,
+
+    //图片存储服务器地址：IUSP5.0版本接入端口建议固定为6011
+    "PicServerIP": "192.168.1.221",
+    "PicServerPort": 6011
+
+  },
+
+  "ams": {
+    //报警服务器监听地址端口
+    "AlarmServerListenIP": "192.168.1.221",
+    "AlarmServerListenTCPPort": 7663,
+    "AlarmServerListenUDPPort": 7662,
+
+    // 报警服务器类型：0- 只支持UDP协议上报，1- 支持UDP、TCP两种协议上报（ISUP4.0） 2-MQTT(ISUP5.0)
+    // MQTT复用TCP的端口
+    "AlarmServerType": 2,
+
+    //报警服务器监听地址端口
+    "AlarmServerIP": "192.168.1.221",
+    "AlarmServerTCPPort": 7663,
+    "AlarmServerUDPPort": 7662
+  },
+
+  "sms": {
+    //取流服务器监听地址端口(服务器本地地址)
+    "SmsServerListenIP": "192.168.1.221",
+    "SmsServerListenPort": 7665,
+
+    // 取流服务器地址端口（公网对接填入公网地址和端口）
+    "SmsServerIP": "192.168.1.221",
+    "SmsServerPort": 7665,
+
+    // 取流服务器监听地址端口(服务器本地地址)
+    "SmsBackServerListenIP": "192.168.1.221",
+    "SmsBackServerListenPort": 8000,
+
+    // 回放流媒体服务器地址端口（公网对接填入公网地址和端口）
+    "SmsBackServerIP": "192.168.1.221",
+    "SmsBackServerPort": 8000
+  },
+  //ISUP5.0登录秘钥 和设备端ISUP页面配置的ISUP登录秘钥保持一致
+  "ISUPKey": "STSXY304",
+
+  // 实时预览目标设备ID
+  //   留空 = 自动：单设备时用唯一在线设备；多设备时交互式提示选择
+  //   ⚠️ 这两项只是**回退**配置：实际回放/预览是按告警自带的 device_id
+  //      找登录句柄的（见 playback_service._resolve_user_id），
+  //      只有拿不到 device_id 时才会用到这里。
+  "PreviewDeviceID": "",
+
+  // 回放目标设备ID（留空同上）
+  "PlaybackDeviceID": ""
+}
