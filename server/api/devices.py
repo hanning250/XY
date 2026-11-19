@@ -144,3 +144,49 @@ async def list_live_devices(
         ),
         "devices": out,
     }
+
+
+@router.get(
+    "/live-snapshot",
+    summary="★ 实况抓拍 JPEG（定时刷新近似实时画面）",
+)
+async def live_snapshot(
+    channel: int = 1,
+    stream: int = 1,
+    _: Principal = Depends(require("device:read")),
+):
+    """从边缘盒子 ISAPI 拉一路当前画面，供实时监控页轮询显示。
+
+    一期不做连续视频流（浏览器无法直接吃 PS/RTSP）；
+    前端每 1~2 秒请求一次即可形成近似实况。
+    """
+    from fastapi import HTTPException
+    from fastapi.responses import Response
+
+    from server.config import get_settings
+    from server.services.isapi_client import IsapiError, get_client
+
+    settings = get_settings()
+    host = getattr(settings, "isapi_host", "") or ""
+    password = getattr(settings, "isapi_password", "") or ""
+    if not host or not password:
+        raise HTTPException(status_code=503, detail="未配置 ISAPI（ISUP_ISAPI_HOST/PASSWORD）")
+
+    client = get_client(
+        host,
+        int(getattr(settings, "isapi_port", 80) or 80),
+        getattr(settings, "isapi_username", "admin") or "admin",
+        password,
+    )
+    try:
+        jpeg = client.channel_snapshot(channel, stream=stream)
+    except IsapiError as exc:
+        raise HTTPException(status_code=502, detail=f"抓拍失败: {exc}") from exc
+    except OSError as exc:
+        raise HTTPException(status_code=502, detail=f"连接设备失败: {exc}") from exc
+
+    return Response(
+        content=jpeg,
+        media_type="image/jpeg",
+        headers={"Cache-Control": "no-store"},
+    )

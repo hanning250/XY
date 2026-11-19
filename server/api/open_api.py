@@ -394,7 +394,7 @@ async def list_workshops(
     request: Request,
     db: AsyncSession = Depends(get_session),
     _: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """返回所有车间及其告警数。
@@ -443,7 +443,7 @@ async def list_channels(
     request: Request,
     db: AsyncSession = Depends(get_session),
     _: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """通道与车间的对应关系。
@@ -906,7 +906,7 @@ async def list_alarms(
     ),
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """★ 甲方主要用这个接口。
@@ -973,7 +973,7 @@ async def list_alarms_by_workshop(
     ),
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """与 `GET /alarms?workshop=<code>` **完全等价**，只是把车间写进路径。
@@ -1019,7 +1019,7 @@ async def list_alarms_summary(
     ),
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """只返回报警本身（无 images / video_url）。
@@ -1064,7 +1064,7 @@ async def list_alarms_images(
     ),
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """只返回「报警 → 图片」的对应关系。
@@ -1109,7 +1109,7 @@ async def list_alarms_videos(
     ),
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """只返回「报警 → 视频」的对应关系。
@@ -1147,7 +1147,7 @@ async def get_alarm(
     alarm_id: str,
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     _set_request_base(None, request)
@@ -1187,7 +1187,7 @@ async def download_alarm_images(
     alarm_id: str,
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """直接返回图片文件字节。
@@ -1396,7 +1396,7 @@ async def download_alarm_video(
     alarm_id: str,
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """直接返回 MP4 文件本体。
@@ -1471,7 +1471,7 @@ async def get_alarm_images(
     alarm_id: str,
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     _set_request_base(None, request)
@@ -1507,7 +1507,7 @@ async def get_alarm_video(
     alarm_id: str,
     db: AsyncSession = Depends(get_session),
     _rl: None = Depends(rate_limit),
-    # ★ 2026-10-27 安全修复：开放接口鉴权（ISUP_OPEN_API_REQUIRES_KEY=true 时必需 X-API-Key）
+    # ★ 2026-10-27 安全修复：开放接口鉴权（必须带有效 X-API-Key）
     _auth: Principal = Depends(require_open("alarm:read")),
 ):
     """视频状态。

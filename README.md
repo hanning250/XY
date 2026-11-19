@@ -29,7 +29,9 @@ cp server/.env.example server/.env   # 已有则可跳过
 #   ISUP_ENABLE_INTERNAL_API=true   # 前端看板依赖 /api/*
 #   ISUP_ENABLE_WEB_UI=true
 #   ISUP_ENABLE_ISUP_SDK=false      # 无设备时先关 SDK
-#   ISUP_AUTH_MODE=anonymous
+#   ISUP_AUTH_MODE=jwt
+#   ISUP_ADMIN_USERNAME=admin
+#   ISUP_ADMIN_PASSWORD=...
 #   ISUP_CORS_ORIGINS=http://127.0.0.1:5173,http://localhost:5173
 
 uvicorn server.main:app --host 0.0.0.0 --port 8088 --reload

@@ -78,26 +78,33 @@ def video_out(alarm: Alarm) -> VideoOut:
 
 
 def _type_text_and_summary(alarm: Alarm) -> tuple[str, str, dict]:
-    """从 content_json 里取业务类型文本、摘要与 AIOP 附加信息。"""
-    if not alarm.content_json:
-        return "", "", {}
-    try:
-        c = json.loads(alarm.content_json) or {}
-    except (ValueError, TypeError):
-        return "", "", {}
+    """从 content_json + 冗余列取业务类型文本、摘要与 AIOP 附加信息。"""
+    c: dict = {}
+    if alarm.content_json:
+        try:
+            c = json.loads(alarm.content_json) or {}
+        except (ValueError, TypeError):
+            c = {}
 
-    type_text = str(c.get("typeText") or "")
+    # 冗余列优先（筛选/统计同源），没有再回退 JSON
+    col_rule = (getattr(alarm, "rule_name", None) or "").strip()
+    type_text = col_rule or str(c.get("typeText") or c.get("ruleName") or "")
     summary = str(c.get("summary") or "")
     repeat = int(c.get("repeatCount") or 1)
+    person = int(getattr(alarm, "person_count", 0) or c.get("personCount") or 0)
+    alarmed = int(getattr(alarm, "alarmed_count", 0) or c.get("alarmedCount") or 0)
+
     extra: dict = {"repeat_count": repeat}
-    if c.get("isAiop"):
+    if c.get("isAiop") or col_rule or person or alarmed:
         extra.update(
             {
-                "is_aiop": True,
-                "rule_name": c.get("ruleName") or "",
+                "is_aiop": bool(c.get("isAiop") or col_rule),
+                "rule_name": col_rule or str(c.get("ruleName") or ""),
                 "mp_name": c.get("mpName") or "",
-                "person_count": c.get("personCount") or 0,
-                "alarmed_count": c.get("alarmedCount") or 0,
+                "person_count": person,
+                "alarmed_count": alarmed,
+                # ★ 甲方口径：人次来自设备算法估算，非平台复核
+                "person_count_source": "device_estimate",
             }
         )
     elif c.get("channelName"):

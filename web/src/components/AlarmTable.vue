@@ -11,9 +11,9 @@
  *
  * 数据来源：GET /api/alarms（字段见 AlarmBrief）
  */
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { Picture, Refresh, Search, View } from '@element-plus/icons-vue'
-import { withToken } from '@/api'
+import { adminApi, alarmApi, withToken } from '@/api'
 import { alarmTypeText, useAlarmStore } from '@/stores/alarm'
 import { useDeviceStore } from '@/stores/device'
 import type { AlarmBrief } from '@/types'
@@ -35,70 +35,19 @@ const emit = defineEmits<{
 const store = useAlarmStore()
 const deviceStore = useDeviceStore()
 
-/* ============================================================================
-   ★ 每页条数随可用高度自适应（2026-10-26 现场反馈「表格下面一大片空白」）
-
-   原来固定 size=10：1080p 屏上一屏能放 18 行，表格区底部就空出一大块白，
-   看起来像"没加载出来"。现在按表格实际可视高度算能放几行。
-
-   ⚠️ 必须用 **布局像素**（clientHeight / offsetHeight），不能用
-      getBoundingClientRect()：整页有 `transform: scale(--ui-scale)`，
-      后者返回的是**缩放后**的视觉尺寸，拿它除以固定的行高会多算 25% 的行，
-      结果就是表格内容溢出、最后几行要滚动才看得到（实测踩过）。
-      clientHeight/offsetHeight 不参与 transform，天然就是布局值。
-
-   另外 el-table 的滚动容器 `.el-scrollbar__wrap` 只包**表体**，
-   表头是独立的 header-wrapper，所以可用高度不需要再减表头高。
-   ========================================================================== */
 const panelRef = ref<HTMLElement | null>(null)
+const workshops = ref<Array<{ code: string; name: string }>>([])
+const ruleNames = ref<string[]>([])
 
-function fitSize() {
-  const panel = panelRef.value
-  if (!panel) return
-  const wrap = panel.querySelector('.el-scrollbar__wrap') as HTMLElement | null
-  if (!wrap) return // 表格还没挂载（切到别的页签）时不动
-  const viewH = wrap.clientHeight
-  if (viewH <= 0) return // 隐藏态（display:none）量不到，跳过
-  // 行高实测：有数据时量第一行；空表时用兜底值（46px 缩略图 + 上下 padding）
-  const rowEl = panel.querySelector('.el-table__body tbody tr') as HTMLElement | null
-  const rowH = rowEl?.offsetHeight || 55
-  if (rowH <= 0) return
-  // 整除时正好铺满（如 385 / 55 = 7 行），不要多减 1 —— 那样会白亏一整行。
-  // floor 本身已保证 rows * rowH <= viewH，不会溢出。
-  const rows = Math.max(5, Math.min(60, Math.floor(viewH / rowH)))
-  if (rows === store.size) return
-  store.size = rows
-  store.page = 1
-  void store.fetchList()
-}
-
-let ro: ResizeObserver | null = null
-let fitTimer: number | null = null
-
-/** 防抖：拖窗口/缩放时不要每帧都重查 */
-function scheduleFit() {
-  if (fitTimer !== null) window.clearTimeout(fitTimer)
-  fitTimer = window.setTimeout(() => {
-    fitTimer = null
-    fitSize()
-  }, 180)
-}
-
-onMounted(() => {
-  // 首帧量一次（等 el-table 渲染完）
-  window.requestAnimationFrame(() => scheduleFit())
-  if (typeof ResizeObserver !== 'undefined' && panelRef.value) {
-    ro = new ResizeObserver(() => scheduleFit())
-    ro.observe(panelRef.value)
-  }
-  window.addEventListener('resize', scheduleFit)
-})
-
-onUnmounted(() => {
-  if (fitTimer !== null) window.clearTimeout(fitTimer)
-  ro?.disconnect()
-  ro = null
-  window.removeEventListener('resize', scheduleFit)
+onMounted(async () => {
+  try {
+    const [ws, rules] = await Promise.all([
+      adminApi.workshops().catch(() => []),
+      alarmApi.ruleNames().catch(() => ({ items: [] as string[] })),
+    ])
+    workshops.value = Array.isArray(ws) ? ws : []
+    ruleNames.value = rules?.items || []
+  } catch { /* 筛选下拉失败不挡列表 */ }
 })
 
 /** ★ 焦点行高亮：左侧蓝线 = 当前大图是哪一条 */
@@ -203,6 +152,33 @@ function reset() {
     <div class="toolbar">
       <div class="t-left">
         <el-select
+          v-model="store.filters.workshop"
+          placeholder="全部区域"
+          clearable
+          filterable
+          size="default"
+          style="width: 140px"
+        >
+          <el-option
+            v-for="w in workshops"
+            :key="w.code"
+            :label="w.name || w.code"
+            :value="w.code"
+          />
+        </el-select>
+
+        <el-select
+          v-model="store.filters.rule_name"
+          placeholder="全部报警类型"
+          clearable
+          filterable
+          size="default"
+          style="width: 180px"
+        >
+          <el-option v-for="n in ruleNames" :key="n" :label="n" :value="n" />
+        </el-select>
+
+        <el-select
           v-model="store.filters.device_id"
           placeholder="全部设备"
           clearable
@@ -217,8 +193,7 @@ function reset() {
           />
         </el-select>
 
-        <!-- ★ 抓拍图筛选：默认「仅有图片」——配不到图的记录在值守界面上
-             只有一行空占位，属于噪声；默认隐藏，需要排查时可切出来看 -->
+        <!-- ★ 抓拍图筛选：默认「仅有图片」 -->
         <el-select v-model="imageFilter" style="width: 116px">
           <el-option label="仅有图片" value="with" />
           <el-option label="全部" value="all" />
@@ -337,9 +312,16 @@ function reset() {
            让甲方逐条点处理，已整列移除。这个位置换成**违规人数** —— 同样占
            一格宽度，但给的是"这次卷进了几个人"的客观事实，比状态有用得多。
            新异常仍然闪动（store 计时，到点自动停），只是不再叫"状态"。 -->
-      <el-table-column label="设备估算" width="104" align="center">
+      <el-table-column label="设备估算" width="118" align="center">
+        <template #header>
+          <span title="人次由边缘盒子算法估算，平台不做复核">设备估算</span>
+        </template>
         <template #default="{ row }">
-          <span class="alarmed" :class="{ zero: alarmedCount(row) === 0, flashing: store.isFlashing(row.id) }">
+          <span
+            class="alarmed"
+            :class="{ zero: alarmedCount(row) === 0, flashing: store.isFlashing(row.id) }"
+            title="设备算法估算人次（非平台复核）"
+          >
             {{ alarmedCount(row) }}<i v-if="alarmedCount(row) > 0">人</i>
           </span>
         </template>

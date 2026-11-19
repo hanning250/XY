@@ -13,7 +13,6 @@
 鉴权方式：
     WebSocket 无法自定义请求头，所以 token 走 query 参数：
         ws://host/api/ws/alarms?token=<jwt>
-    未启用登录（auth_mode=anonymous）时不带 token 也可连接（开发模式）。
 """
 
 from __future__ import annotations
@@ -24,10 +23,9 @@ import logging
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from server.auth.base import ALL_SCOPES, Principal
+from server.auth.base import Principal
 from server.auth.tokens import TokenError, decode_token
 from server.config import get_settings
-from server.models import PrincipalKind
 from server.services.bus import bus
 
 logger = logging.getLogger(__name__)
@@ -45,18 +43,7 @@ async def _principal_from_ws(websocket: WebSocket) -> Principal | None:
     返回 None 表示鉴权失败（调用方应关闭连接）。
     """
     settings = get_settings()
-    mode = settings.auth_mode.lower()
-
     token = websocket.query_params.get("token", "").strip()
-
-    if mode != "jwt":
-        # 开发模式：放行，且视为可看全部（与匿名 Principal 一致）
-        return Principal(
-            kind=PrincipalKind.ANONYMOUS.value,
-            subject="anonymous",
-            scopes=set(ALL_SCOPES),
-        )
-
     if not token:
         return None
     try:
@@ -66,7 +53,6 @@ async def _principal_from_ws(websocket: WebSocket) -> Principal | None:
         return None
 
     # ★ 统一走 principal_from_claims：含「账号已停用/删除即拒绝」校验
-    # （2026-XX 安全审查修复；原来 WS 只验签名，停用账号的 token 仍可连 12h）
     from server.auth.jwt_auth import principal_from_claims
 
     return await principal_from_claims(claims)

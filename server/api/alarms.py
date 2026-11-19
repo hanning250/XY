@@ -53,6 +53,17 @@ async def alarm_stats(
     return AlarmStatsOut(**data)
 
 
+@router.get("/rule-names", summary="报警类型（规则名）下拉选项")
+async def list_rule_names(
+    db: AsyncSession = Depends(get_session),
+    principal: Principal = Depends(require("alarm:read")),
+):
+    names = await alarm_crud.list_rule_names(
+        db, workshops=principal.visible_workshops()
+    )
+    return {"items": names}
+
+
 @router.get("", response_model=PagedData[AlarmBrief], summary="告警分页列表")
 async def list_alarms(
     page: int = Query(1, ge=1),
@@ -60,6 +71,8 @@ async def list_alarms(
     device_id: str | None = None,
     channel: int | None = None,
     alarm_type: int | None = None,
+    workshop: str | None = Query(None, description="区域/车间 code"),
+    rule_name: str | None = Query(None, description="报警类型（规则名）"),
     start: datetime | None = None,
     end: datetime | None = None,
     status: str | None = None,
@@ -83,6 +96,8 @@ async def list_alarms(
             handled=handled,
             has_image=has_image,
             workshops=principal.visible_workshops(),
+            workshop=workshop,
+            rule_name=rule_name,
         ),
         page=page,
         size=size,

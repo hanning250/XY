@@ -113,8 +113,8 @@ class AuditMiddleware(BaseHTTPMiddleware):
         from server.crud.security import build_audit_row
 
         row = build_audit_row(
-            principal_kind=getattr(principal, "kind", PrincipalKind.ANONYMOUS.value),
-            subject=getattr(principal, "subject", "anonymous"),
+            principal_kind=getattr(principal, "kind", PrincipalKind.USER.value),
+            subject=getattr(principal, "subject", "") or "-",
             method=request.method,
             path=path,
             status_code=response.status_code,

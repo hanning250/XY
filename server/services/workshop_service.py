@@ -105,9 +105,11 @@ async def resolve_workshop_name(db: AsyncSession, code: str | None) -> str | Non
 # --------------------------------------------------------------------------
 # 配对参数
 # --------------------------------------------------------------------------
-# 图片与告警允许的最大时间差（秒）。
-# 实测图片比告警早到约 11s，给到 90s 留足抖动余量，但远小于旧实现的 120s。
-MATCH_TOLERANCE_SECONDS = 90.0
+# 图片与告警「平台到达时间」允许的最大差（秒）。
+# 顺序配对必须用同一时钟（服务器 arrived_at / created_at），
+# 切勿拿设备上报的 alarm_time —— 盒子时钟偏差常见 1~数分钟，
+# 会把本该配上的图误标孤儿（有录像、无图片）。
+MATCH_TOLERANCE_SECONDS = 180.0
 
 # 待配对队列的积压上限。超过则认为流已失序，**停止自动配对**转人工，
 # 避免「顺序错位后一路错下去」把图全配错。
@@ -641,17 +643,27 @@ async def count_pending(db: AsyncSession) -> int:
 
 
 async def take_oldest_pending(
-    db: AsyncSession, *, alarm_time: datetime
+    db: AsyncSession,
+    *,
+    reference_time: datetime | None = None,
+    alarm_time: datetime | None = None,
 ) -> tuple[PendingImage | None, str]:
     """★ 从队列头取最早的一张图片配对。
 
     返回 (图片, 结果说明)。图片为 None 表示无可配对。
+
+    reference_time：优先传告警的 **平台入库时间 created_at**（与图片 arrived_at
+    同一时钟）。历史调用若仍传 alarm_time=，会当作 reference 兼容。
 
     三重保护：
       ① 积压超过 MAX_PENDING → 返回 'overflow'，**不配对**，转人工
       ② 时间差超过 MATCH_TOLERANCE_SECONDS → 丢弃过期的，继续找
       ③ 只有完全在容忍范围内的才配对
     """
+    ref = reference_time if reference_time is not None else alarm_time
+    if ref is None:
+        return None, "empty"
+
     pending_count = await count_pending(db)
     if pending_count > MAX_PENDING:
         logger.error(
@@ -671,19 +683,19 @@ async def take_oldest_pending(
     if row is None:
         return None, "empty"
 
-    # 时间合理性校验
-    delta = abs((alarm_time - row.arrived_at).total_seconds())
+    # 时间合理性校验（两边都是平台时钟）
+    delta = abs((ref - row.arrived_at).total_seconds())
     if delta > MATCH_TOLERANCE_SECONDS:
         # 这张图太旧/太新，与当前告警无关 → 标记孤儿，继续尝试下一张
         row.status = "orphan"
         await db.commit()
         logger.warning(
-            "图片 %s 与告警时间差 %.1fs 超出容忍 %.0fs，标记为孤儿",
+            "图片 %s 与告警到达时间差 %.1fs 超出容忍 %.0fs，标记为孤儿",
             row.source_name,
             delta,
             MATCH_TOLERANCE_SECONDS,
         )
-        return await take_oldest_pending(db, alarm_time=alarm_time)
+        return await take_oldest_pending(db, reference_time=ref)
 
     return row, "ok"
 

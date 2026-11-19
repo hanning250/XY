@@ -94,3 +94,35 @@ async def workshop_frequency(
             "items": items,
         },
     }
+
+
+@router.get(
+    "/by-workshop-rule",
+    summary="★ 按区域×报警类型汇总条数与设备估算人次",
+)
+async def by_workshop_rule(
+    start: datetime | None = Query(None, description="起始（含）"),
+    end: datetime | None = Query(None, description="结束（含）"),
+    db: AsyncSession = Depends(get_session),
+    principal: Principal = Depends(require("alarm:read")),
+):
+    """甲方分类统计：更衣室/废膜房 × 未穿防护服 等。
+
+    person_sum / alarmed_sum 来自设备上报的估算人次，平台不做复核。
+    """
+    from server.services import workshop_service as ws_svc
+
+    items = await alarm_crud.count_by_workshop_rule(
+        db,
+        start=start,
+        end=end,
+        workshops=principal.visible_workshops(),
+    )
+    names = await ws_svc.workshop_name_map(db)
+    for row in items:
+        code = row.get("workshop")
+        row["workshop_name"] = names.get(code, code) if code else "未指派"
+    return {
+        "items": items,
+        "note": "人次为设备算法估算，非平台复核",
+    }

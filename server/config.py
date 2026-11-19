@@ -76,20 +76,21 @@ class Settings(BaseSettings):
     db_max_overflow: int = 40
     db_pool_timeout: int = 60
 
-    # ---- 鉴权（★ 预留设计，见 docs/技术选型与架构方案.md §5）----
-    # anonymous : 全部放行，Principal.scopes = 全权限（开发期 / 内网初期）
-    # apikey    : 内部与开放 API 都要求 X-API-Key
-    # jwt       : 走登录注册（后续实现）
-    auth_mode: str = "anonymous"
+    # ---- 鉴权 ----
+    # jwt    : 登录页 + JWT（默认）
+    # apikey : 内部 API 也要求 X-API-Key
+    # （anonymous 已移除；开放 API 一律要求 X-API-Key）
+    auth_mode: str = "jwt"
 
-    # 当 auth_mode=anonymous 时，是否仍要求**开放 API** 带 Key。
-    # 默认 False，方便前端先跑通；甲方 IT 部门接入前改成 True。
-    open_api_requires_key: bool = False
-
-    # JWT 预留（后续做登录注册时使用）
+    # JWT
     jwt_secret: str = "CHANGE_ME_IN_PRODUCTION"
     jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 720
+    jwt_expire_minutes: int = 43200  # 默认 30 天
+
+    # ★ 启动时确保存在的管理员（auth_mode=jwt 时生效）
+    #   账号不存在 → 创建；已存在且配置了密码 → 按环境变量同步密码（便于本机部署）。
+    admin_username: str = "admin"
+    admin_password: str = ""
 
     # ---- ★ 告警聚合（见 docs §3）----
     # 收到告警后，等待图片到达的窗口（秒）。

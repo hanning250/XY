@@ -31,13 +31,28 @@ export const useAlarmStore = defineStore('alarm', () => {
   const total = ref(0)
   const loading = ref(false)
   const page = ref(1)
-  // ★ 每页 10 条：实测 1080p 屏幕下「总览带 + 工具条 + 表头 + 10 行 + 分页」
-  //   正好一屏放下，不用滚动（表格行高 53px，含 46px 缩略图）。
-  const size = ref(10)
+  // ★ 甲方要求可选 20/50/100；默认 20，并持久化到 localStorage
+  const PAGE_SIZE_KEY = 'isup.alarm.pageSize'
+  const ALLOWED_SIZES = [20, 50, 100] as const
+  function _loadSize(): number {
+    try {
+      const n = Number(localStorage.getItem(PAGE_SIZE_KEY))
+      if ((ALLOWED_SIZES as readonly number[]).includes(n)) return n
+    } catch { /* ignore */ }
+    return 20
+  }
+  const size = ref(_loadSize())
+  function setPageSize(n: number) {
+    if (!(ALLOWED_SIZES as readonly number[]).includes(n)) return
+    size.value = n
+    try { localStorage.setItem(PAGE_SIZE_KEY, String(n)) } catch { /* ignore */ }
+  }
 
   const filters = ref({
     device_id: '' as string,
     alarm_type: undefined as number | undefined,
+    workshop: '' as string,
+    rule_name: '' as string,
     start: '' as string,
     end: '' as string,
     /**
@@ -102,6 +117,8 @@ export const useAlarmStore = defineStore('alarm', () => {
       const params: Record<string, unknown> = { page: page.value, size: size.value }
       if (filters.value.device_id) params.device_id = filters.value.device_id
       if (filters.value.alarm_type !== undefined) params.alarm_type = filters.value.alarm_type
+      if (filters.value.workshop) params.workshop = filters.value.workshop
+      if (filters.value.rule_name) params.rule_name = filters.value.rule_name
       if (filters.value.start) params.start = filters.value.start
       if (filters.value.end) params.end = filters.value.end
       // ★ 默认只看有抓拍图的告警（undefined=全部，要看无图记录由用户显式切换）
@@ -193,6 +210,8 @@ export const useAlarmStore = defineStore('alarm', () => {
     filters.value = {
       device_id: '',
       alarm_type: undefined,
+      workshop: '',
+      rule_name: '',
       start: '',
       end: '',
       has_image: true,
@@ -240,7 +259,7 @@ export const useAlarmStore = defineStore('alarm', () => {
   }
 
   return {
-    items, total, loading, page, size, filters,
+    items, total, loading, page, size, setPageSize, ALLOWED_SIZES, filters,
     detail, detailLoading, stats, pendingCount,
     flashing, markFlash, isFlashing, FLASH_MS,
     fetchList, fetchDetail, refreshOne, prepend, resetFilters, fetchStats,

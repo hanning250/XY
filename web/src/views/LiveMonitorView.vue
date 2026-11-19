@@ -22,7 +22,7 @@ import {
   RefreshRight,
   VideoCamera,
 } from '@element-plus/icons-vue'
-import { withToken, devApi } from '@/api'
+import { withToken, devApi, deviceApi } from '@/api'
 import { alarmTypeText, useAlarmStore } from '@/stores/alarm'
 import type { AlarmBrief } from '@/types'
 
@@ -39,6 +39,75 @@ const follow = ref(true)
 /** 大图加载状态 */
 const imgLoading = ref(false)
 const imgFailed = ref(false)
+
+/** 画面模式：alarm=报警抓拍，live=摄像头实况（ISAPI 定时抓拍） */
+const stageMode = ref<'alarm' | 'live'>('alarm')
+const liveChannel = ref(1)
+const liveUrl = ref('')
+const liveError = ref('')
+let liveTimer: number | undefined
+let liveObjectUrl: string | undefined
+
+async function refreshLive() {
+  try {
+    const blob = await deviceApi.liveSnapshot(liveChannel.value, 1)
+    if (!(blob instanceof Blob) || blob.size < 100 || blob.type.includes('json')) {
+      // 失败时后端可能仍以 JSON 错误体返回（axios responseType=blob）
+      const text = blob instanceof Blob ? await blob.text() : ''
+      try {
+        const j = JSON.parse(text) as { detail?: string }
+        liveError.value = j.detail || '实况抓拍失败'
+      } catch {
+        liveError.value = '实况抓拍失败'
+      }
+      return
+    }
+    if (liveObjectUrl) URL.revokeObjectURL(liveObjectUrl)
+    liveObjectUrl = URL.createObjectURL(blob)
+    liveUrl.value = liveObjectUrl
+    liveError.value = ''
+  } catch (e: unknown) {
+    const err = e as { response?: { data?: Blob | { detail?: string } }; message?: string }
+    const data = err?.response?.data
+    if (data instanceof Blob) {
+      try {
+        const j = JSON.parse(await data.text()) as { detail?: string }
+        liveError.value = j.detail || '实况抓拍失败'
+        return
+      } catch { /* fallthrough */ }
+    }
+    liveError.value =
+      (typeof data === 'object' && data && 'detail' in data && data.detail) ||
+      err?.message ||
+      '实况抓拍失败'
+  }
+}
+
+function startLive() {
+  stopLive()
+  void refreshLive()
+  liveTimer = window.setInterval(() => void refreshLive(), 1500)
+}
+
+function stopLive() {
+  if (liveTimer !== undefined) {
+    window.clearInterval(liveTimer)
+    liveTimer = undefined
+  }
+  if (liveObjectUrl) {
+    URL.revokeObjectURL(liveObjectUrl)
+    liveObjectUrl = undefined
+  }
+  liveUrl.value = ''
+}
+
+watch(stageMode, (m) => {
+  if (m === 'live') startLive()
+  else stopLive()
+})
+watch(liveChannel, () => {
+  if (stageMode.value === 'live') startLive()
+})
 
 const list = computed(() => store.items)
 
@@ -153,6 +222,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+  stopLive()
   window.removeEventListener('keydown', onKey)
 })
 
@@ -313,9 +383,42 @@ void tick
       </div>
     </aside>
 
-    <!-- ============ 右：大图 ============ -->
+    <!-- ============ 右：大图 / 实况 ============ -->
     <main class="stage">
-      <template v-if="current">
+      <div class="stage-toolbar">
+        <button type="button" class="mode" :class="{ on: stageMode === 'alarm' }" @click="stageMode = 'alarm'">报警抓拍</button>
+        <button type="button" class="mode" :class="{ on: stageMode === 'live' }" @click="stageMode = 'live'">实时画面</button>
+        <template v-if="stageMode === 'live'">
+          <label class="ch">
+            通道
+            <select v-model.number="liveChannel">
+              <option :value="1">1</option>
+              <option :value="2">2</option>
+              <option :value="3">3</option>
+              <option :value="4">4</option>
+            </select>
+          </label>
+          <button type="button" class="mode" @click="refreshLive">刷新</button>
+        </template>
+      </div>
+
+      <!-- 实况：ISAPI 定时抓拍 -->
+      <template v-if="stageMode === 'live'">
+        <div class="shot live-shot">
+          <img v-if="liveUrl" :src="liveUrl" alt="实时画面" />
+          <div v-else class="shot-empty">
+            <div class="se-ico"><el-icon :size="38"><VideoCamera /></el-icon></div>
+            <div class="se-txt">{{ liveError || '正在连接实况…' }}</div>
+            <div class="se-sub">约每 1.5 秒刷新一帧（ISAPI 抓拍）</div>
+          </div>
+          <div class="shot-tl">
+            <span class="badge-live">实时画面</span>
+            <span class="badge-time">通道 {{ liveChannel }}</span>
+          </div>
+        </div>
+      </template>
+
+      <template v-else-if="current">
         <!-- 图区 -->
         <div class="shot" :class="{ fresh: store.isFlashing(current.id) }">
           <img
@@ -343,8 +446,6 @@ void tick
             <span class="badge-ago">{{ agoText }}</span>
           </div>
           <div class="shot-tr">
-            <!-- ★ 2026-10-26：原「未处理/已处理」角标改为违规人数。
-                 新报警仍然闪动提醒，只是不再需要人点"处理"。 -->
             <span
               class="badge-alarmed"
               :class="{ zero: alarmedOf(current) === 0, flashing: store.isFlashing(current.id) }"
@@ -431,6 +532,43 @@ export default { name: 'LiveMonitorView' }
   min-height: 0;
   padding: 14px 18px;
   box-sizing: border-box;
+}
+.stage-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.stage-toolbar .mode {
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text-2);
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: var(--fs-cap);
+  font-weight: 600;
+  cursor: pointer;
+}
+.stage-toolbar .mode.on {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
+.stage-toolbar .ch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--fs-cap);
+  color: var(--text-2);
+  margin-left: 4px;
+}
+.stage-toolbar .ch select {
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border-2);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 6px;
 }
 
 /* ============ 左：报警流 ============ */
@@ -584,6 +722,13 @@ export default { name: 'LiveMonitorView' }
   flex-direction: column;
   gap: 12px;
   min-height: 0;
+  min-width: 0;
+}
+.live-shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #0b1220;
 }
 
 .shot {

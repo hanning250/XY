@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { ArrowDown, Bell, Monitor, Picture, Refresh, User, WarningFilled } from '@element-plus/icons-vue'
+import { alarmApi } from '@/api'
 import { useAlarmStore } from '@/stores/alarm'
 import { useDashboardStore } from '@/stores/dashboard'
 
@@ -11,6 +12,27 @@ dashboard.ensureScope()
 const alarms = useAlarmStore()
 const data = computed(() => dashboard.data)
 const expanded = ref(localStorage.getItem('isup_board_expanded') === '1')
+
+/** 区域 × 报警类型分类统计（甲方③） */
+type RuleStat = {
+  workshop: string | null
+  workshop_name?: string
+  rule_name: string
+  alarm_count: number
+  person_sum: number
+  alarmed_sum: number
+}
+const ruleStats = ref<RuleStat[]>([])
+const ruleStatsNote = ref('')
+async function loadRuleStats() {
+  try {
+    const res = await alarmApi.byWorkshopRule()
+    ruleStats.value = res.items || []
+    ruleStatsNote.value = res.note || ''
+  } catch {
+    ruleStats.value = []
+  }
+}
 const updatedLabel = computed(() => dashboard.updatedAt
   ? new Date(dashboard.updatedAt).toLocaleTimeString('zh-CN', { hour12: false }) : '')
 const notOnline = computed(() => Math.max(0, (data.value?.devices_total ?? 0) - (data.value?.devices_online ?? 0)))
@@ -44,6 +66,7 @@ function scheduleRefresh() {
   scheduled = window.setTimeout(() => {
     scheduled = undefined
     void dashboard.refresh(true)
+    void loadRuleStats()
   }, 1500)
 }
 watch(() => alarms.stats.today, scheduleRefresh)
@@ -55,6 +78,7 @@ function onVisible() {
 }
 onMounted(() => {
   void dashboard.refresh()
+  void loadRuleStats()
   poll = window.setInterval(onVisible, 15_000)
   document.addEventListener('visibilitychange', onVisible)
 })
@@ -141,6 +165,33 @@ onUnmounted(() => {
         <div v-if="data.workshops?.length" class="workshop-strip">
           <strong>车间概况</strong><span v-for="workshop in data.workshops" :key="workshop.code" class="workshop-item">{{ workshop.name }}<b>{{ workshop.today }} 条</b><small>在线 {{ workshop.channels_online }}/{{ workshop.channels }}</small></span>
         </div>
+        <section class="rule-stats">
+          <div class="panel-heading">
+            <h3>按区域 × 报警类型汇总</h3>
+            <span>{{ ruleStatsNote || '人次为设备估算' }}</span>
+          </div>
+          <table v-if="ruleStats.length" class="rule-table">
+            <thead>
+              <tr>
+                <th>区域</th>
+                <th>报警类型</th>
+                <th>报警条数</th>
+                <th>设备估算人次</th>
+                <th>违规人次</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in ruleStats" :key="`${row.workshop}-${row.rule_name}-${i}`">
+                <td>{{ row.workshop_name || row.workshop || '未指派' }}</td>
+                <td>{{ row.rule_name || '（未分类）' }}</td>
+                <td class="num">{{ row.alarm_count }}</td>
+                <td class="num">{{ row.person_sum }}</td>
+                <td class="num">{{ row.alarmed_sum }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-else class="empty-chart">暂无分类统计数据</div>
+        </section>
         <footer class="analysis-foot">
           <span>每个事件平均上报 <b>{{ data.repeat_ratio }}</b> 条</span><span>图片等待配对 <b>{{ data.pending_images }}</b> 张</span><span>事件按同一设备、通道、类型及 {{ data.event_window_seconds }} 秒时间窗口归并</span>
         </footer>
@@ -231,6 +282,13 @@ h3 { font-size: var(--fs-md); font-weight: 650; }
 .workshop-item { display: inline-flex; gap: 9px; align-items: baseline; }
 .workshop-item b { color: var(--brand); font-weight: 600; }
 .workshop-item small { font-size: inherit; }
+.rule-stats { padding: 14px 20px 8px; border-top: 1px solid var(--border); }
+.rule-stats .panel-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.rule-stats .panel-heading span { font-size: var(--fs-cap); color: var(--text-2); }
+.rule-table { width: 100%; border-collapse: collapse; font-size: var(--fs-cap); }
+.rule-table th, .rule-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); color: var(--text); }
+.rule-table th { color: var(--text-2); font-weight: 600; background: var(--surface-2); }
+.rule-table .num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
 .analysis-foot { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 10px 20px; background: var(--surface-2); border-top: 1px solid var(--border); color: var(--text-2); font-size: var(--fs-cap); }
 .analysis-foot b { color: var(--text); }
 .load-error { display: flex; align-items: center; gap: 12px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; font-size: var(--fs-base); color: var(--text-2); }

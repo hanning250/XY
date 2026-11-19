@@ -171,6 +171,9 @@ async def create_alarm(
     alarm_id: str | None = None,
     workshop: str | None = None,
     workshop_rule: str | None = None,
+    rule_name: str | None = None,
+    person_count: int = 0,
+    alarmed_count: int = 0,
 ) -> Alarm:
     """新建一条告警。
 
@@ -203,6 +206,9 @@ async def create_alarm(
         correlate_deadline=deadline,
         workshop=workshop,
         workshop_rule=workshop_rule,
+        rule_name=(rule_name or None),
+        person_count=int(person_count or 0),
+        alarmed_count=int(alarmed_count or 0),
     )
     db.add(alarm)
     await db.commit()
@@ -1417,3 +1423,112 @@ async def count_data_quality(
         "with_image_pct": round(with_img * 100.0 / total, 1) if total else 0.0,
         "unassigned": await count_unassigned(db, workshops=workshops),
     }
+
+
+async def list_rule_names(
+    db: AsyncSession,
+    *,
+    workshops: list[str] | None = None,
+) -> list[str]:
+    """去重后的报警类型（规则名），供前端下拉。"""
+    if is_denied(workshops):
+        return []
+    conds: list = [
+        Alarm.rule_name.isnot(None),
+        Alarm.rule_name != "",
+    ]
+    conds.extend(workshop_scope(Alarm.workshop, workshops))
+    stmt = (
+        select(Alarm.rule_name)
+        .where(*conds)
+        .distinct()
+        .order_by(Alarm.rule_name.asc())
+    )
+    return [str(r[0]) for r in (await db.execute(stmt)).all() if r[0]]
+
+
+async def count_by_workshop_rule(
+    db: AsyncSession,
+    *,
+    start: datetime | None = None,
+    end: datetime | None = None,
+    workshops: list[str] | None = None,
+) -> list[dict]:
+    """按「车间 × 报警类型」汇总条数与设备估算人次。
+
+    返回每行：
+      workshop, rule_name, alarm_count, person_sum, alarmed_sum
+    """
+    if is_denied(workshops):
+        return []
+
+    conds: list = []
+    if start is not None:
+        conds.append(Alarm.alarm_time >= start)
+    if end is not None:
+        conds.append(Alarm.alarm_time <= end)
+    conds.extend(workshop_scope(Alarm.workshop, workshops))
+
+    stmt = (
+        select(
+            Alarm.workshop,
+            Alarm.rule_name,
+            func.count(Alarm.id),
+            func.coalesce(func.sum(Alarm.person_count), 0),
+            func.coalesce(func.sum(Alarm.alarmed_count), 0),
+        )
+        .where(*conds)
+        .group_by(Alarm.workshop, Alarm.rule_name)
+        .order_by(func.count(Alarm.id).desc())
+    )
+    rows = (await db.execute(stmt)).all()
+    out: list[dict] = []
+    for ws, rule, cnt, psum, asum in rows:
+        out.append(
+            {
+                "workshop": ws,
+                "rule_name": rule or "（未分类）",
+                "alarm_count": int(cnt or 0),
+                "person_sum": int(psum or 0),
+                "alarmed_sum": int(asum or 0),
+            }
+        )
+    return out
+
+
+async def backfill_rule_fields(db: AsyncSession, *, limit: int = 5000) -> int:
+    """把历史 content_json 里的 ruleName/personCount 回填到冗余列。
+
+    只处理 rule_name 为空且 content_json 非空的行；返回更新条数。
+    """
+    stmt = (
+        select(Alarm)
+        .where(
+            Alarm.content_json.isnot(None),
+            (Alarm.rule_name.is_(None)) | (Alarm.rule_name == ""),
+        )
+        .limit(limit)
+    )
+    rows = list((await db.execute(stmt)).scalars().all())
+    updated = 0
+    for alarm in rows:
+        try:
+            c = json.loads(alarm.content_json or "{}") or {}
+        except (ValueError, TypeError):
+            continue
+        rule = str(c.get("ruleName") or c.get("typeText") or "").strip()
+        if not rule and not c.get("isAiop"):
+            continue
+        alarm.rule_name = rule or alarm.rule_name
+        try:
+            alarm.person_count = int(c.get("personCount") or 0)
+        except (TypeError, ValueError):
+            alarm.person_count = 0
+        try:
+            alarm.alarmed_count = int(c.get("alarmedCount") or 0)
+        except (TypeError, ValueError):
+            alarm.alarmed_count = 0
+        updated += 1
+    if updated:
+        await db.commit()
+    return updated

@@ -172,6 +172,10 @@ def _migrate_add_columns(conn) -> None:
             ("workshop_rule", "VARCHAR(32)"),
             # ★ 视频抓取失败原因（前端展示用）
             ("video_error", "VARCHAR(512)"),
+            # ★ 筛选/统计：规则名与设备估算人次
+            ("rule_name", "VARCHAR(128)"),
+            ("person_count", "INTEGER DEFAULT 0"),
+            ("alarmed_count", "INTEGER DEFAULT 0"),
         ],
         "user": [
             # ★ 跨车间账号（admin 可看全部车间）
@@ -195,6 +199,8 @@ def _migrate_add_columns(conn) -> None:
     for idx_name, table, cols in (
         ("idx_alarm_workshop_time", "alarm", "(workshop, alarm_time)"),
         ("idx_alarm_handled", "alarm", "(handled)"),
+        ("idx_alarm_rule_name", "alarm", "(rule_name)"),
+        ("idx_alarm_workshop_rule", "alarm", "(workshop, rule_name)"),
     ):
         if table not in existing_tables:
             continue

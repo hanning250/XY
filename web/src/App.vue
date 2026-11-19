@@ -1,9 +1,7 @@
 <script setup lang="ts">
 /**
  * ★ 应用根组件 —— 唯一登录门禁。
- *
- * · jwt：无 token 显示 LoginView；登录成功或本地已有 token 进 AlarmBoard
- * · anonymous：LoginView 拉 /api/auth/config 后直接 emit，进入看板
+ * 无 token 显示 LoginView；登录成功或本地已有 token 进 AlarmBoard。
  */
 import { onMounted, onUnmounted, ref } from 'vue'
 import AlarmBoard from '@/views/AlarmBoard.vue'

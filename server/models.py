@@ -79,7 +79,6 @@ class VideoStatus(str, enum.Enum):
 
 
 class PrincipalKind(str, enum.Enum):
-    ANONYMOUS = "anonymous"
     API_KEY = "api_key"
     USER = "user"
 
@@ -222,6 +221,11 @@ class Alarm(Base):
     workshop: Mapped[str | None] = mapped_column(String(32), nullable=True)
     # 归属依据留痕：便于排查「这条为什么归到 A 车间」
     workshop_rule: Mapped[str | None] = mapped_column(String(32), nullable=True)
+
+    # ★ 筛选/统计冗余列（来自 AIOP；落库时写入，避免每次解析 content_json）
+    rule_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    person_count: Mapped[int] = mapped_column(Integer, default=0)
+    alarmed_count: Mapped[int] = mapped_column(Integer, default=0)
 
     # ---- ① 报警消息内容 ----
     content_raw: Mapped[str | None] = mapped_column(Text, nullable=True)

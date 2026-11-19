@@ -14,9 +14,9 @@
     必须通过 SMS SDK 的按时间回放把码流拉下来。拉下来的是 MPEG-PS，
     浏览器播不了，需要 ffmpeg 转成 MP4。
 
-★ 关键经验（同事踩过的坑，已保留）
-    PS 流里的音频是 pcm_alaw，**不能直接 copy 进 MP4**，
-    必须转成 AAC，否则转码直接失败。
+★ 关键经验
+    告警取证只要画面：转码一律 -an 丢弃音轨。
+    设备 PS 音轨（pcm_alaw / 损坏 mp2）曾导致整段 Conversion failed。
 """
 
 from __future__ import annotations
@@ -165,25 +165,23 @@ def _probe_stream_codecs(path: Path) -> tuple[str | None, str | None]:
 
 
 def transcode_ps_to_mp4(ps_path: Path, mp4_path: Path) -> None:
-    """MPEG-PS → MP4。
+    """MPEG-PS → MP4（仅视频，丢弃音轨）。
 
-    ★ 视频流直接 copy（不重编码，快且无损）；
-      音频转 AAC —— PS 里通常是 pcm_alaw，copy 进 MP4 会失败。
-      +faststart 让浏览器可以边下边播。
+    ★ 告警取证只要画面；设备 PS 音轨常损坏（mp2 Header missing），
+      转 AAC 会整段 Conversion failed。直接 -an，避免踩坑、也更快。
+      视频 H.264 则 copy；HEVC 则重编码为 H.264。+faststart 方便边下边播。
     """
     ffmpeg = _get_ffmpeg()
     video_codec, _audio_codec = _probe_stream_codecs(ps_path)
 
     if video_codec == "h264":
         v_args = ["-c:v", "copy"]
-        logger.info("视频轨已是 H.264，直接拷贝: %s", ps_path.name)
+        logger.info("视频轨已是 H.264，直接拷贝（无音频）: %s", ps_path.name)
     else:
         # ★★ 2026-10-23 现场修复：设备输出 HEVC/H.265，Chrome 原生不支持，
         #    必须重编码为 H.264（原来 -c:v copy 产出的 MP4 前端播不了）。
-        #    性能：ultrafast 比 veryfast 快 2~3 倍；宽度限 1280 再省约 55%
-        #    （报警取证不需要 1080p）。
         logger.info(
-            "视频轨 %s 浏览器不支持，重编码为 H.264（ultrafast + 限宽1280）: %s",
+            "视频轨 %s 浏览器不支持，重编码为 H.264（无音频）: %s",
             video_codec or "unknown",
             ps_path.name,
         )
@@ -192,11 +190,6 @@ def transcode_ps_to_mp4(ps_path: Path, mp4_path: Path) -> None:
             "-preset", "ultrafast",
             "-crf", "28",
             "-pix_fmt", "yuv420p",
-            # ★ 2026-10-23 再压缩：限宽 960（原 1280）。
-            #   报警取证只需要认出人和衣着，960x540 足够；
-            #   编码耗时与像素数成正比，1280→960 省约 45%，
-            #   实测转码 15 秒 → 约 10 秒。这 5 秒对容量很关键
-            #   （见 _MAX_CONCURRENT 的容量账）。
             "-vf", "scale='min(960,iw)':-2",
             "-threads", "4",
         ]
@@ -205,18 +198,12 @@ def transcode_ps_to_mp4(ps_path: Path, mp4_path: Path) -> None:
         [
             ffmpeg,
             "-y",
-            # ★ 设备返回的 PS 流有时前几秒没有有效帧，默认探测窗口太短
-            #   会报 "Could not find codec parameters"；放宽探测。
             "-analyzeduration", "10M",
             "-probesize", "10M",
             "-i", str(ps_path),
-            # ★ 视频流用 ? 后缀：某些录像段可能**只有音频没有视频**，
-            #   不带 ? 时 ffmpeg 会直接报 "Stream map matches no streams" 而失败。
             "-map", "0:v:0?",
-                        *v_args,
-            "-map", "0:a:0?",      # ? = 没有音频流也不报错
-            "-c:a", "aac",
-            "-b:a", "64k",
+            *v_args,
+            "-an",
             "-movflags", "+faststart",
             "-f", "mp4",
             str(mp4_path),
@@ -228,9 +215,7 @@ def transcode_ps_to_mp4(ps_path: Path, mp4_path: Path) -> None:
     )
     if result.returncode != 0:
         detail = (result.stderr or result.stdout or "unknown error").strip()
-        # 只保留最后几行，ffmpeg 的报错很长
         tail = detail[-800:]
-        # 该时段只有音频/没有视频轨 —— 给一个能看懂的提示
         if "matches no streams" in detail or "does not contain any stream" in detail:
             raise RuntimeError("该时段录像没有视频轨（可能只有音频或为空）")
         raise RuntimeError(tail)

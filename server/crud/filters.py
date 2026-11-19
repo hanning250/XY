@@ -60,11 +60,24 @@ class AlarmFilter:
     handled: bool | None = None
     has_image: bool | None = None
     workshops: list[str] | None = None
+    # ★ 甲方筛选：区域（单车间 code）+ 报警类型（AIOP 规则名）
+    workshop: str | None = None
+    rule_name: str | None = None
 
     # ------------------------------------------------------------------
+    def _effective_workshops(self) -> list[str] | None:
+        """可见车间与单车间筛选求交后的最终列表。"""
+        scoped = self.workshops
+        if self.workshop:
+            code = self.workshop.strip()
+            if scoped is None:
+                return [code]
+            return [w for w in scoped if w == code]
+        return list(scoped) if scoped is not None else None
+
     def is_denied(self) -> bool:
-        """该条件是否必然返回空集（没有分配车间）。"""
-        return is_denied(self.workshops)
+        """该条件是否必然返回空集（没有分配车间 / 筛选越权）。"""
+        return is_denied(self._effective_workshops())
 
     def to_conditions(self) -> list[ColumnElement]:
         """翻译成 SQLAlchemy 条件列表。
@@ -107,6 +120,10 @@ class AlarmFilter:
             ).exists()
             conds.append(img_exists if self.has_image else ~img_exists)
 
+        # ---- 报警类型（规则名，精确匹配）----
+        if self.rule_name:
+            conds.append(Alarm.rule_name == self.rule_name)
+
         # ---- 车间隔离（数据不串的核心）----
-        conds.extend(workshop_scope(Alarm.workshop, self.workshops))
+        conds.extend(workshop_scope(Alarm.workshop, self._effective_workshops()))
         return conds

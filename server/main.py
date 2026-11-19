@@ -54,6 +54,55 @@ async def lifespan(app: FastAPI):
     # 1) 建表
     await init_db()
 
+    # 1.2) ★ JWT 模式：确保管理员可登录（本机用环境变量固定账号密码）
+    if settings.auth_mode.lower() == "jwt":
+        from server.crud import user as user_crud
+
+        admin_name = (settings.admin_username or "admin").strip() or "admin"
+        admin_pwd = (settings.admin_password or "").strip() or None
+        async with SessionLocal() as db:
+            user, created_pwd = await user_crud.ensure_admin(
+                db, username=admin_name, password=admin_pwd
+            )
+            if created_pwd is not None:
+                if admin_pwd:
+                    logger.info(
+                        "已创建管理员账号 %s（密码来自 ISUP_ADMIN_PASSWORD）",
+                        admin_name,
+                    )
+                else:
+                    logger.warning(
+                        "已创建管理员账号 %s，初始密码（仅显示一次）: %s",
+                        admin_name,
+                        created_pwd,
+                    )
+            elif admin_pwd:
+                # 已存在：仅当环境变量密码与库里不一致时才同步
+                # （密码未变则不动 token；环境变量改密时才同步）
+                from server.auth.tokens import verify_password
+
+                if not verify_password(admin_pwd, user.password_hash):
+                    await user_crud.set_password(db, user=user, password=admin_pwd)
+                    logger.info(
+                        "管理员账号 %s 已按 ISUP_ADMIN_PASSWORD 同步密码",
+                        admin_name,
+                    )
+                else:
+                    logger.info("管理员账号已就绪: %s", admin_name)
+            else:
+                logger.info("管理员账号已存在: %s", admin_name)
+
+    # 1.3) ★ 历史告警回填 rule_name / person_count（筛选与分类统计依赖）
+    try:
+        from server.crud import alarm as alarm_crud
+
+        async with SessionLocal() as db:
+            n_bf = await alarm_crud.backfill_rule_fields(db)
+            if n_bf:
+                logger.info("已回填 %d 条历史告警的规则名/人次字段", n_bf)
+    except Exception:
+        logger.exception("历史告警字段回填失败（不影响启动）")
+
     # 1.5) ★ 软件授权：首次启动即激活（授权期 = 首次启动 + 365 天）
     #   打包脚本排除 data/，所以客户现场解包首启就是新的一轮授权。
     #
@@ -460,9 +509,6 @@ def create_app() -> FastAPI:
                 raw = auth[7:].strip()
             if not raw:
                 raw = request.query_params.get("token", "").strip()
-
-            if settings.auth_mode.lower() != "jwt":
-                return  # 开发模式（anonymous）放行
 
             if not raw:
                 raise HTTPException(status_code=401, detail="需要登录")

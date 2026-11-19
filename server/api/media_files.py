@@ -29,12 +29,12 @@ from fastapi.responses import FileResponse
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from server.auth.base import ALL_SCOPES, Principal
+from server.auth.base import Principal
 from server.api.auth import MEDIA_TOKEN_COOKIE
 from server.auth.tokens import TokenError, decode_token
 from server.config import MEDIA_VIDEO_DIR, STORAGE_DIR, get_settings
 from server.db import SessionLocal
-from server.models import Alarm, AlarmImage, PrincipalKind
+from server.models import Alarm, AlarmImage
 
 logger = logging.getLogger(__name__)
 
@@ -46,12 +46,10 @@ async def _principal_from_request(
 ) -> Principal | None:
     """从 header / Cookie / query 解析身份（优先级从高到低）。
 
-    ★ 2026-XX 安全审查：主路径改为 **HttpOnly Cookie**（登录时签发，
-      浏览器对 <img>/<video> 自动携带），token 不再进 URL。
-      query ?token= 仅作兼容兜底（旧前端书签/脚本），将在前端更新后移除。
+    ★ 主路径：**HttpOnly Cookie**（登录时签发）；
+      query ?token= 仅作兼容兜底。
     """
     settings = get_settings()
-    mode = settings.auth_mode.lower()
 
     raw = ""
     auth = request.headers.get("Authorization", "")
@@ -62,14 +60,6 @@ async def _principal_from_request(
     if not raw and token:
         raw = token.strip()
 
-    if mode != "jwt":
-        # 开发模式放行（与匿名 Principal 一致：可看全部）
-        return Principal(
-            kind=PrincipalKind.ANONYMOUS.value,
-            subject="anonymous",
-            scopes=set(ALL_SCOPES),
-        )
-
     if not raw:
         return None
     try:
@@ -77,8 +67,6 @@ async def _principal_from_request(
     except TokenError:
         return None
 
-    # ★ 统一走 principal_from_claims：含「账号已停用/删除即拒绝」校验
-    # （2026-XX 安全审查修复）
     from server.auth.jwt_auth import principal_from_claims
 
     return await principal_from_claims(claims)

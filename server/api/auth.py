@@ -55,14 +55,14 @@ def _login_throttled(ip: str, username: str) -> bool:
 
 @router.get("/config", summary="前端启动时拉取鉴权配置")
 async def auth_config():
-    """前端据此决定是否显示登录页，以及整页缩放（现场大屏适配）。"""
+    """前端据此决定登录与整页缩放（现场大屏适配）。"""
     settings = get_settings()
     mode = settings.auth_mode.lower()
+    # 仅 jwt / apikey；不再支持 anonymous。看板始终需要登录（jwt）。
     return {
-        "auth_mode": mode,
-        "login_enabled": mode == "jwt",
-        "workshop_isolation": mode == "jwt",
-        # ★ 大屏适配：前端启动时写进 <html style="zoom">，改配置不用重新构建前端
+        "auth_mode": mode if mode in ("jwt", "apikey") else "jwt",
+        "login_enabled": True,
+        "workshop_isolation": True,
         "ui_scale": settings.ui_scale,
     }
 
@@ -74,12 +74,10 @@ async def login(payload: LoginIn, request: Request, db: AsyncSession = Depends(g
     token 里带 workshops 列表 → 决定该账号能看哪些车间。
     """
     settings = get_settings()
-    if settings.auth_mode.lower() != "jwt":
+    if settings.auth_mode.lower() == "apikey":
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED,
-            detail=(
-                "登录未启用。请在 server/.env 里设置 ISUP_AUTH_MODE=jwt 后重启服务。"
-            ),
+            detail="当前为 apikey 模式，请使用 X-API-Key，不提供密码登录。",
         )
 
     client_ip = request.client.host if request.client else "-"

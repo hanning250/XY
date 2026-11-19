@@ -318,7 +318,7 @@ onMounted(async () => {
   // ★ 剩余天数随时间变化，值守机长期不刷新页面，必须定时对表
   licenseTimer = window.setInterval(() => void license.fetch(), 10 * 60 * 1000)
 
-  // ★ App.vue 已完成登录门禁（含 anonymous 无 token）。此处直接初始化业务。
+  // ★ App.vue 已完成登录门禁。此处直接初始化业务。
   await license.fetch()
   // ★ 已到期：不连 WebSocket、不拉业务数据（后端也会 403），只留拦截页
   if (license.blocked) return
@@ -450,18 +450,20 @@ onUnmounted(() => {
               @delete="onDelete"
             />
 
-            <div v-if="store.items.length" class="pager">
+            <div v-if="store.items.length || store.total > 0" class="pager">
               <span class="pager-info">
                 第 {{ store.page }} 页 · 每页 {{ store.size }} 条 · 共
                 <b>{{ store.total }}</b> 条
               </span>
               <el-pagination
-                layout="prev, pager, next"
+                layout="sizes, prev, pager, next"
                 :current-page="store.page"
                 :page-size="store.size"
+                :page-sizes="[...store.ALLOWED_SIZES]"
                 :total="store.total"
                 :pager-count="7"
                 @current-change="(p: number) => { store.page = p; store.fetchList() }"
+                @size-change="(n: number) => { store.setPageSize(n); store.page = 1; store.fetchList() }"
               />
               <span class="pager-hint">
                 点行看大图 · 双击进详情 · ↑↓ 换图

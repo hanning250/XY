@@ -281,6 +281,30 @@ class IsapiClient:
                 out[tag] = m.group(1)
         return out
 
+    def channel_snapshot(self, channel: int = 1, *, stream: int = 1) -> bytes:
+        """抓一路实时 JPEG（ISAPI Streaming picture）。
+
+        track：{channel}{stream} → 通道1主码流=101，子码流=102。
+        用于平台「实况」面板近似实时画面（定时刷新）。
+        """
+        ch = max(1, int(channel))
+        st = 1 if int(stream) <= 1 else 2
+        track = ch * 100 + st
+        path = f"/ISAPI/Streaming/channels/{track}/picture"
+        status, headers, body = self.request("GET", path, timeout=8.0)
+        if status != 200:
+            raise IsapiError(f"snapshot HTTP {status} channel={ch}")
+        if not body or len(body) < 100:
+            raise IsapiError("snapshot 空响应")
+        # 少数固件包一层 multipart；有 JPEG SOI 就直接用
+        soi = body.find(b"\xff\xd8")
+        if soi > 0:
+            body = body[soi:]
+        ctypeype = (headers.get("content-type") or "").lower()
+        if "jpeg" not in ctypeype and not body.startswith(b"\xff\xd8"):
+            raise IsapiError(f"snapshot 非 JPEG: {ctype[:40]}")
+        return body
+
     def download_segment(
         self,
         playback_uri: str,

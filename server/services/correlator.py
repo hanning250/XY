@@ -346,6 +346,9 @@ class Correlator:
                 correlate_window_seconds=self._settings.correlate_window_seconds,
                 workshop=workshop_code,
                 workshop_rule=workshop_rule,
+                rule_name=parsed.rule_name or parsed.type_text or None,
+                person_count=int(parsed.person_count or 0),
+                alarmed_count=int(parsed.alarmed_count or 0),
             )
 
             # ---- 情况 A：报文自带图片，立即配对 ----
@@ -491,8 +494,9 @@ class Correlator:
         if existing > 0:
             return
 
+        # ★ 用平台入库时间配对，避开设备时钟与服务器的偏差
         pending, reason = await ws_svc.take_oldest_pending(
-            db, alarm_time=alarm.alarm_time
+            db, reference_time=alarm.created_at or alarm.alarm_time
         )
         if pending is None:
             return

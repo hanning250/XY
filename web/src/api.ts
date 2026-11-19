@@ -129,6 +129,24 @@ export const alarmApi = {
   list(params: Record<string, unknown> = {}) {
     return http.get('/api/alarms', { params }).then((r) => r.data)
   },
+  ruleNames() {
+    return http.get('/api/alarms/rule-names').then((r) => r.data as { items: string[] })
+  },
+  byWorkshopRule(params: Record<string, unknown> = {}) {
+    return http
+      .get('/api/stats/by-workshop-rule', { params })
+      .then((r) => r.data as {
+        items: Array<{
+          workshop: string | null
+          workshop_name?: string
+          rule_name: string
+          alarm_count: number
+          person_sum: number
+          alarmed_sum: number
+        }>
+        note?: string
+      })
+  },
   detail(id: string) {
     return http.get(`/api/alarms/${id}`).then((r) => r.data)
   },
@@ -173,6 +191,15 @@ export const alarmApi = {
 export const deviceApi = {
   list() {
     return http.get('/api/devices').then((r) => r.data)
+  },
+  /** 实况抓拍 JPEG（Blob），前端定时刷新形成近似实时画面 */
+  liveSnapshot(channel = 1, stream = 1) {
+    return http
+      .get('/api/devices/live-snapshot', {
+        params: { channel, stream },
+        responseType: 'blob',
+      })
+      .then((r) => r.data as Blob)
   },
   /** ★ 通道列表（按车间隔离；子账号只看到本车间的摄像头） */
   channels() {
