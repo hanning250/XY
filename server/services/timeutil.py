@@ -25,8 +25,6 @@
 
     ③ **接收外部时间参数时**，带时区的按其偏移转换，不带的按本地时间理解。
 
-改造时的兼容性：历史数据里 created_at 是 UTC naive，读出来会比 alarm_time
-小 8 小时。用 `utc_naive_to_local()` 可做一次性纠正。
 """
 
 from __future__ import annotations
@@ -43,24 +41,6 @@ LOCAL_TZ_NAME = "+08:00"
 def now_local() -> datetime:
     """当前本地时间（naive，东八区）。**替代 datetime.now()**。"""
     return datetime.now(LOCAL_TZ).replace(tzinfo=None)
-
-
-def utcnow_naive() -> datetime:
-    """当前 UTC 时间（naive）。仅用于确实需要 UTC 的场景。"""
-    return datetime.now(timezone.utc).replace(tzinfo=None)
-
-
-def utc_naive_to_local(dt: datetime | None) -> datetime | None:
-    """把「UTC naive」转成「本地 naive」。
-
-    用于纠正历史遗留数据（created_at 等字段曾以 UTC 存储）。
-    """
-    if dt is None:
-        return None
-    if dt.tzinfo is not None:
-        return dt.astimezone(LOCAL_TZ).replace(tzinfo=None)
-    # naive 视为 UTC，加 8 小时
-    return (dt.replace(tzinfo=timezone.utc)).astimezone(LOCAL_TZ).replace(tzinfo=None)
 
 
 def to_local_naive(dt: datetime | None) -> datetime | None:

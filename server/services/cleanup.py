@@ -143,7 +143,9 @@ def _as_local(dt: datetime) -> datetime:
     if dt.tzinfo is None:
         # 接口传来的无时区时间按本地时间理解
         return dt
-    return dt.astimezone().replace(tzinfo=None)
+    from server.services.timeutil import to_local_naive
+
+    return to_local_naive(dt) or dt.replace(tzinfo=None)
 
 
 # ---------------------------------------------------------------------------

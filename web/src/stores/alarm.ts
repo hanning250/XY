@@ -238,6 +238,25 @@ export const useAlarmStore = defineStore('alarm', () => {
     return deleted
   }
 
+  /** ★ 清空全部（后端真删记录+图片+视频；跟随当前筛选） */
+  async function removeAll() {
+    const f = filters.value
+    const body: Record<string, unknown> = {}
+    if (f.device_id) body.device_id = f.device_id
+    if (f.alarm_type !== undefined) body.alarm_type = f.alarm_type
+    if (f.workshop) body.workshop = f.workshop
+    if (f.rule_name) body.rule_name = f.rule_name
+    if (f.start) body.start = f.start
+    if (f.end) body.end = f.end
+    if (f.has_image !== undefined) body.has_image = f.has_image
+    const res = await alarmApi.batchRemoveAll(body)
+    const deleted: string[] = res?.data?.deleted_ids ?? []
+    items.value = []
+    detail.value = null
+    total.value = 0
+    return deleted
+  }
+
   /** ★ 请求抓取真实回放（后台执行，完成后由 WS 推送更新） */
   async function requestPlayback(id: string) {
     await alarmApi.requestPlayback(id)
@@ -263,6 +282,6 @@ export const useAlarmStore = defineStore('alarm', () => {
     detail, detailLoading, stats, pendingCount,
     flashing, markFlash, isFlashing, FLASH_MS,
     fetchList, fetchDetail, refreshOne, prepend, resetFilters, fetchStats,
-    removeOne, removeMany, requestPlayback, removeByIds,
+    removeOne, removeMany, removeAll, requestPlayback, removeByIds,
   }
 })

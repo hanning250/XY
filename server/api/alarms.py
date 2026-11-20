@@ -358,52 +358,105 @@ async def batch_delete_alarms(
       （不报错、不删除），避免「猜 ID 删别人的数据」。
     """
     visible = principal.visible_workshops()
-
-    # 先做对象级过滤：把不属于本车间的 ID 剔掉
-    allowed_ids: list[str] = []
-    for aid in dict.fromkeys(payload.ids):
-        alarm = await alarm_crud.get_alarm(db, aid)
-        if alarm is None:
-            continue
-        if visible is not None:
-            if not visible or getattr(alarm, "workshop", None) not in visible:
-                logger.warning(
-                    "拒绝越权删除: %s 试图删除车间 %s 的告警 %s",
-                    principal.subject,
-                    getattr(alarm, "workshop", None),
-                    aid,
-                )
-                continue
-        allowed_ids.append(aid)
-
-    if not allowed_ids:
-        raise HTTPException(status_code=404, detail="未找到可删除的告警")
-
-    ids, paths_by_alarm = await alarm_crud.delete_alarms(db, allowed_ids)
-    if not ids:
-        raise HTTPException(status_code=404, detail="未找到要删除的告警")
-
     svc = getattr(request.app.state, "playback_service", None)
-    if svc is not None:
-        for aid in ids:
-            svc.cancel(aid)
 
+    deleted_all: list[str] = []
     removed = 0
     failed = 0
-    for aid in ids:
-        r, f = playback_registry.delete_alarm_files(
-            aid, file_paths=paths_by_alarm.get(aid, [])
+
+    async def _wipe(batch_ids: list[str]) -> None:
+        nonlocal removed, failed
+        if not batch_ids:
+            return
+        ids, paths_by_alarm = await alarm_crud.delete_alarms(db, batch_ids)
+        if svc is not None:
+            for aid in ids:
+                svc.cancel(aid)
+        for aid in ids:
+            r, f = playback_registry.delete_alarm_files(
+                aid, file_paths=paths_by_alarm.get(aid, [])
+            )
+            removed += r
+            failed += f
+        deleted_all.extend(ids)
+
+    if payload.all:
+        flt = AlarmFilter(
+            workshops=visible,
+            device_id=payload.device_id or None,
+            workshop=payload.workshop or None,
+            rule_name=payload.rule_name or None,
+            start=payload.start,
+            end=payload.end,
+            has_image=payload.has_image,
+            alarm_type=payload.alarm_type,
         )
-        removed += r
-        failed += f
+        while True:
+            batch = await alarm_crud.list_alarm_ids(db, f=flt, limit=400)
+            if not batch:
+                break
+            await _wipe(batch)
+        unfiltered = not any(
+            [
+                payload.device_id,
+                payload.workshop,
+                payload.rule_name,
+                payload.start,
+                payload.end,
+                payload.has_image is not None,
+                payload.alarm_type is not None,
+            ]
+        )
+        if visible is None and unfiltered:
+            from sqlalchemy import delete as sql_delete
 
-    logger.info("批量删除 %d 条告警，清理文件 %d 个（失败 %d）", len(ids), removed, failed)
+            from server.models import PendingImage
 
-    await _broadcast_delete(ids)
+            pend = list((await db.execute(select(PendingImage))).scalars().all())
+            for p in pend:
+                if p.file_path:
+                    r, f = playback_registry.delete_alarm_files(
+                        p.matched_alarm_id or "pending",
+                        file_paths=[p.file_path],
+                    )
+                    removed += r
+                    failed += f
+            if pend:
+                await db.execute(sql_delete(PendingImage))
+                await db.commit()
+            removed += playback_registry.purge_orphan_media_dirs()
+    else:
+        allowed_ids: list[str] = []
+        for aid in dict.fromkeys(payload.ids):
+            alarm = await alarm_crud.get_alarm(db, aid)
+            if alarm is None:
+                continue
+            if visible is not None:
+                if not visible or getattr(alarm, "workshop", None) not in visible:
+                    logger.warning(
+                        "拒绝越权删除: %s 试图删除车间 %s 的告警 %s",
+                        principal.subject,
+                        getattr(alarm, "workshop", None),
+                        aid,
+                    )
+                    continue
+            allowed_ids.append(aid)
+        await _wipe(allowed_ids)
+
+    if not deleted_all and not payload.all:
+        raise HTTPException(status_code=404, detail="未找到可删除的告警")
+
+    logger.info(
+        "批量删除 %d 条告警，清理文件 %d 个（失败 %d）",
+        len(deleted_all),
+        removed,
+        failed,
+    )
+    await _broadcast_delete(deleted_all)
     return {
         "code": 0,
-        "message": f"已删除 {len(ids)} 条",
-        "data": {"deleted_ids": ids, "files_removed": removed},
+        "message": f"已删除 {len(deleted_all)} 条",
+        "data": {"deleted_ids": deleted_all, "files_removed": removed},
     }
 
 

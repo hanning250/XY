@@ -530,16 +530,8 @@ async def devices_online_debug(
     from server.crud.device import device_online_map
     from server.models import Device, utcnow
     from server.services.online_probe import probe_device
-    from server.services.sdk_devices import (
-        online_device_ids,
-        online_snapshot,
-        sdk_available,
-    )
 
     cfg = get_settings()
-    sdk_ok = sdk_available()
-    sdk_ids = online_device_ids() if sdk_ok else set()
-    sdk_map = online_snapshot() if sdk_ok else {}
 
     rows = (await db.execute(select(Device))).scalars().all()
     now = utcnow()
@@ -557,8 +549,6 @@ async def devices_online_debug(
                 if d.last_seen
                 else None
             ),
-            "in_sdk_table": (d.device_id in sdk_ids) if sdk_ok else None,
-            "sdk_user_id": sdk_map.get(d.device_id),
         }
         if d.ip:
             r = probe_device(d.device_id, d.ip)
@@ -574,9 +564,6 @@ async def devices_online_debug(
         item["final_online"] = final.get(item["device_id"])
 
     return {
-        "sdk_available": sdk_ok,
-        "sdk_online_count": len(sdk_ids),
-        "sdk_online_devices": sorted(sdk_ids),
         "probe_port": cfg.device_online_probe_port,
         "offline_after_minutes": cfg.device_offline_after_minutes,
         "devices": devices,
@@ -673,31 +660,12 @@ async def video_grab_status(
 
     ## 为什么要这个接口
 
-    之前排查时用独立脚本读 `isup_runtime` / `playback_service`，
-    但那是**另一个进程的新实例**（`started=False, sms=None`），
-    和真正提供服务的进程不是同一份 —— 得出的结论是错的。
-
     这个接口在**服务进程内**执行，返回的是真实运行状态。
-
-    ## 返回什么
-
-      sdk.started        SDK 是否启动成功
-      sdk.sms            是否拿到 SMS 实例（抓录像必需）
-      playback.running   worker 线程是否在跑
-      playback.workers   worker 数量
-      playback.queue     当前排队数
-      playback.active    正在抓取的告警数
-      auto_capture       自动抓取开关
-      diagnosis          一句话结论 + 建议
     """
     _guard(principal)
 
-    from server.adapters.isup_runtime import runtime as isup_runtime
     from server.services.playback_service import playback_service as psvc
 
-    sdk_started = bool(getattr(isup_runtime, "started", False))
-    sdk_sms = getattr(isup_runtime, "sms", None) is not None
-    ps_sms = getattr(psvc, "_sms", None) is not None
     ps_running = bool(getattr(psvc, "_running", False))
     ps_workers = len(getattr(psvc, "_workers", []) or [])
     try:
@@ -711,25 +679,15 @@ async def video_grab_status(
 
     settings = _gs()
     auto = bool(getattr(settings, "video_auto_capture", False))
+    isapi_ok = bool(
+        getattr(settings, "video_use_isapi", False)
+        and getattr(settings, "isapi_host", "")
+        and getattr(settings, "isapi_password", "")
+    )
 
     # ---- 一句话结论 ----
-    if not sdk_started:
-        diag = (
-            "❌ ISUP SDK 没启动 → 抓不了录像。"
-            "检查 7665(SMS)/7661(CMS) 端口、设备是否连上来、SDK 库是否加载。"
-        )
-        level = "error"
-    elif not sdk_sms:
-        diag = (
-            "❌ SDK 起来了但没拿到 SMS 实例 → 抓不了录像。"
-            "检查 isup_runtime.start() 里 SMS 初始化是否成功。"
-        )
-        level = "error"
-    elif not ps_sms:
-        diag = (
-            "❌ 回放服务没注入 SMS → submit() 会静默返回 False。"
-            "这是「报警永远 not_requested」的直接原因。"
-        )
+    if not isapi_ok:
+        diag = "❌ ISAPI 未配置 host/password → 抓不了录像。"
         level = "error"
     elif not ps_running:
         diag = (
@@ -751,15 +709,12 @@ async def video_grab_status(
             "level": level,
             "diagnosis": diag,
             "sdk": {
-                "started": sdk_started,
-                "sms": sdk_sms,
-                "cms": getattr(isup_runtime, "cms", None) is not None,
-                "ams": getattr(isup_runtime, "ams", None) is not None,
-                "ss": getattr(isup_runtime, "ss", None) is not None,
-                "last_error": getattr(isup_runtime, "last_error", None),
+                "started": False,
+                "sms": False,
+                "note": "ISUP 已移除，录像走 ISAPI",
             },
             "playback": {
-                "sms_injected": ps_sms,
+                "sms_injected": False,
                 "running": ps_running,
                 "workers": ps_workers,
                 "queue": qsize,

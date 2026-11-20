@@ -8,9 +8,8 @@
 isup-alarm/
 ├─ server/       FastAPI 后端（API / 鉴权 / 告警聚合 / WebSocket）
 ├─ web/          Vue3 + Vite 前端源码
-├─ src/          海康 ISUP SDK Python 封装（CMS / AMS / SS / SMS）
-├─ lib/          海康 ISUP 动态库（Windows .dll + Linux .so）
-├─ resources/    isupConf.json 等运行配置
+├─ src/          媒体清理等遗留工具（已无 ISUP SDK）
+├─ lib/hcnetsdk  设备网路 SDK（布防收 ISAPI 报警）
 └─ requirements.txt
 ```
 
@@ -28,7 +27,6 @@ cp server/.env.example server/.env   # 已有则可跳过
 # 本地联调务必确认：
 #   ISUP_ENABLE_INTERNAL_API=true   # 前端看板依赖 /api/*
 #   ISUP_ENABLE_WEB_UI=true
-#   ISUP_ENABLE_ISUP_SDK=false      # 无设备时先关 SDK
 #   ISUP_AUTH_MODE=jwt
 #   ISUP_ADMIN_USERNAME=admin
 #   ISUP_ADMIN_PASSWORD=...
@@ -47,16 +45,15 @@ npm run dev          # http://127.0.0.1:5173
 
 Vite 已把 `/api`、`/openapi`、`/media`、WebSocket 代理到 `127.0.0.1:8088`。
 
-### 3. 接真实设备（ISUP）
+### 3. 接真实设备（ISAPI + HCNetSDK）
 
-1. 编辑 `resources/conf/isupConf.json`（监听 IP/端口、`ISUPKey` 与设备端一致）
-2. `server/.env` 中设 `ISUP_ENABLE_ISUP_SDK=true`
-3. 启动：`uvicorn server.main:app --host 0.0.0.0 --port 8088`
-4. 单端口托管前端时，先 `cd web && npm run build`，再：
+1. `server/.env` 配 `ISUP_ISAPI_HOST` / 密码，以及 `ISUP_HCNETSDK_DIR=…/lib/hcnetsdk`
+2. 启动：`uvicorn server.main:app --host 0.0.0.0 --port 8088 --reload-dir server --reload-dir src`
+3. 单端口托管前端时，先 `cd web && npm run build`，再：
    `uvicorn server.serve_web:app --host 0.0.0.0 --port 8088`
 
 ## 说明
 
-- 协议主体为 **ISUP 5.0**（CMS 注册 / AMS 报警 / SS 图片）；NVR 录像回放等能力会用到 ISAPI。
-- 本目录不含 Docker / 一键部署 / 现场验收脚本；需要时再从原交接包取用。
+- 告警走 HCNetSDK 布防（ISAPI 登录）；实况/录像走 HTTP ISAPI。已移除 ISUP 5.0 CMS/AMS/SS。
+- 环境变量仍以 `ISUP_` 为前缀（历史命名，不是 ISUP 协议）。
 - `server/.env` 含密钥类配置，勿提交到公开仓库。

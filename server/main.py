@@ -3,9 +3,9 @@
 
 启动顺序（很重要）：
   1. 建库建表
-  2. 绑定事件循环到事件总线（SDK 回调需要）
+  2. 绑定事件循环到事件总线（HCNet 报警回调需要）
   3. 启动聚合器 / 视频服务
-  4. 最后才拉起 ISUP SDK 监听（此时总线已就绪）
+  4. 拉起 HCNetSDK 布防（ISAPI 登录）
 """
 
 from __future__ import annotations
@@ -23,7 +23,6 @@ from server.api import (
     admin,
     alarms,
     auth,
-    dev,
     devices,
     license as license_api,
     media,
@@ -168,41 +167,59 @@ async def lifespan(app: FastAPI):
     cleanup_task = asyncio.create_task(_cleanup_loop())
     app.state.cleanup_task = cleanup_task
 
-    # 4) 拉起 ISUP SDK（失败不阻断服务，便于前端先跑通）
-    from server.adapters.isup_runtime import runtime as isup_runtime
-
     loop = asyncio.get_running_loop()
-    started = await loop.run_in_executor(None, isup_runtime.start)
-    app.state.isup_runtime = isup_runtime
-    app.state.isup_ok = started
-    if not started:
-        logger.warning(
-            "ISUP SDK 未启动（原因：%s）。服务继续以 API-only 模式运行。",
-            isup_runtime.last_error,
-        )
 
     # 4.2) ★ 启动清零设备在线状态
-    #   进程重启后设备与旧进程的连接必然已断，残留的 online=1 是
-    #   「假在线」（新进程收不到离线事件）。设备重新注册时会自动翻回在线。
+    #   进程重启后旧的 online=1 是假在线。HCNet 重新登录成功后再标上线。
     from server.crud.device import mark_all_offline
 
     async with SessionLocal() as db:
         await mark_all_offline(db)
 
-    # 4.5) ★ 回放服务：必须在 SDK 起来之后，才能拿到 sms 实例
+    # 4.5) 回放服务：录像走 ISAPI 下载
     from server.services.playback_service import playback_service
 
     playback_service.bind_loop(loop)
     playback_service.set_done_callback(_on_playback_done)
-    if started:
-        sms = getattr(isup_runtime, "sms", None)
-        if sms is not None:
-            playback_service.register_sms(sms)
-            logger.info("回放服务已注入 SMS，可抓取设备录像")
-        else:
-            logger.warning("未能从 isup_runtime 取得 sms 实例，回放抓取不可用")
     playback_service.start()
     app.state.playback_service = playback_service
+
+    # 4.55) 告警：优先 HCNetSDK 布防（ISAPI 登录），HTTP alertStream 作兜底
+    hcnet_alarm = None
+    if getattr(settings, "hcnetsdk_enable", True) and getattr(
+        settings, "isapi_host", ""
+    ):
+        from server.services.hcnet_alarm import hcnet_alarm_listener
+
+        hcnet_alarm_listener.start()
+        hcnet_alarm = hcnet_alarm_listener
+        app.state.hcnet_alarm = hcnet_alarm_listener
+        _mode = int(getattr(settings, "hcnetsdk_login_mode", 1) or 1)
+        _port = int(getattr(settings, "hcnetsdk_port", 0) or 0)
+        if _mode == 1:
+            _port = int(getattr(settings, "isapi_port", 0) or _port or 80)
+            if _port == 8000:
+                _port = 80
+        logger.info(
+            "HCNetSDK 布防已开启 → %s:%s mode=%s（库 %s）",
+            settings.isapi_host,
+            _port,
+            {0: "Private", 1: "ISAPI", 2: "Auto"}.get(_mode, _mode),
+            getattr(settings, "hcnetsdk_dir", ""),
+        )
+    if (
+        getattr(settings, "isapi_alert_enable", False)
+        and getattr(settings, "isapi_host", "")
+        and getattr(settings, "isapi_password", "")
+    ):
+        from server.services.isapi_alert import isapi_alert_listener
+
+        isapi_alert_listener.start()
+        app.state.isapi_alert = isapi_alert_listener
+        logger.info(
+            "ISAPI HTTP alertStream 已开启 → %s（与布防并存会重复告警）",
+            settings.isapi_host,
+        )
 
     # 4.6) ★ 把回放服务注入聚合器 → 告警落库后自动抓取 ±30s 视频片段。
     #      IT 部门按天批量拉取，拉的时候视频必须已生成好。
@@ -246,10 +263,13 @@ async def lifespan(app: FastAPI):
         except (asyncio.CancelledError, Exception):
             pass
         playback_service.stop()
+        if hcnet_alarm is not None:
+            hcnet_alarm.stop()
+        from server.services.isapi_alert import isapi_alert_listener as _alert
+
+        _alert.stop()
         await video_service.stop()
         await correlator.stop()
-        if started:
-            await loop.run_in_executor(None, isup_runtime.stop)
         await dispose_db()
         logger.info("服务已停止")
 
@@ -376,10 +396,6 @@ def create_app() -> FastAPI:
         app.include_router(ws.ws_router, prefix="/api", include_in_schema=False)
         # ★ 授权：查状态 + 授权码续期（到期后仍可用，否则没法续期）
         app.include_router(license_api.router, prefix="/api", include_in_schema=False)
-        # ★ 调试接口（模拟报警等）：仅 ISUP_DEBUG=true 时注册，交付机不存在
-        if settings.debug:
-            app.include_router(dev.router, prefix="/api", include_in_schema=False)
-            logger.warning("★ 调试接口已启用（/api/dev/*，模拟报警用）—— 交付机请设 ISUP_DEBUG=false")
         logger.info("内部接口已启用（/api/*，文档见 /internal/docs）")
     else:
         logger.info(
@@ -444,12 +460,9 @@ def create_app() -> FastAPI:
         # 这属于内部实现细节。
         @app.get("/health", tags=["服务状态"], summary="服务健康检查（无需鉴权）")
         async def health():
-            from server.adapters.isup_runtime import runtime as isup_runtime
-
             return {
                 "status": "ok",
-                "isup_sdk_started": getattr(app.state, "isup_ok", False),
-                "isup_note": isup_runtime.last_error,
+                "hcnet_alarm": getattr(app.state, "hcnet_alarm", None) is not None,
                 "ws_subscribers": bus.subscriber_count,
             }
     # 交付模式下甲方的探活走 /openapi/v1/health（不泄露内部实现）。

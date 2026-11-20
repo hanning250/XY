@@ -29,21 +29,6 @@ def sanitize_filename(name: str) -> str:
     return name or "unnamed.jpg"
 
 
-def split_hash_and_seq(filename: str) -> tuple[str, int]:
-    """从文件名拆出 (哈希, 序号)。
-
-    实测 storage/ 里存在 `02C91C96... (2).jpg` 这种同哈希带序号的组图。
-    序号回到 [0, N)。哈希作为对外 URL 的键。
-    """
-    stem = Path(filename).stem
-    m = re.match(r"^(?P<hash>[0-9A-Fa-f]{16,64})\s*(?:\((?P<seq>\d+)\))?$", stem)
-    if m:
-        seq = int(m.group("seq") or 1) - 1
-        return m.group("hash").upper(), max(seq, 0)
-    # 不是「哈希(序号)」形态：整体当作 hash 键
-    return stem, 0
-
-
 def probe_jpeg_size(data: bytes) -> tuple[int | None, int | None]:
     """从 JPEG 字节流里读出宽高（不解码，只扫 SOF 段）。
 
@@ -135,18 +120,6 @@ def relative_to_project(path: Path) -> str:
         return path.as_posix()
 
 
-def safe_mtime(path: Path) -> float | None:
-    """安全取文件 mtime；文件已被删除时返回 None 而不是抛异常。
-
-    ★ 清理策略会随时删除文件，而图片关联逻辑可能在之后才用到这些路径。
-      直接 stat() 会抛 FileNotFoundError，进而让整条告警入库失败。
-    """
-    try:
-        return path.stat().st_mtime
-    except OSError:
-        return None
-
-
 def image_urls(file_path: str) -> tuple[str, str, str]:
     """由存储相对路径生成 (相对URL, 绝对URL, 缩略图URL)。
 
@@ -176,9 +149,3 @@ def video_public_url(filename: str) -> str:
     """
     settings = get_settings()
     return f"{settings.public_base_url.rstrip('/')}/media/video/{filename}"
-
-
-def stored_path(relative: str) -> Path:
-    """把数据库里的相对路径（如 storage/2026/09/20/x.jpg）还原成绝对 Path。"""
-    p = Path(relative)
-    return p if p.is_absolute() else PROJECT_ROOT / p

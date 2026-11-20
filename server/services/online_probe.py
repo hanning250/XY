@@ -38,17 +38,12 @@
 """
 from __future__ import annotations
 
-import asyncio
 import logging
 import socket
 import subprocess
-import time
 from dataclasses import dataclass
 
 logger = logging.getLogger(__name__)
-
-# 探测结果缓存：避免每次页面刷新都去探测
-_PROBE_CACHE: dict[str, tuple[float, bool | None]] = {}
 
 
 def _cfg_float(name: str, default: float) -> float:
@@ -69,10 +64,6 @@ def _cfg_int(name: str, default: int) -> int:
         return default
 
 
-def _ttl() -> float:
-    return _cfg_float("device_online_probe_cache_seconds", 20.0)
-
-
 def _timeout() -> float:
     return _cfg_float("device_online_probe_timeout", 1.5)
 
@@ -80,14 +71,6 @@ def _timeout() -> float:
 def _probe_port() -> int:
     return _cfg_int("device_online_probe_port", 80)
 
-
-def probe_enabled() -> bool:
-    try:
-        from server.config import get_settings
-
-        return bool(getattr(get_settings(), "device_online_probe_enabled", True))
-    except Exception:
-        return True
 
 # 平台对外服务的本机端口（用于判断"谁连着平台"）
 _LISTEN_PORTS = (7661, 7663, 6011)
@@ -188,21 +171,3 @@ def probe_device(
         return ProbeResult(True, f"ISUP 连接活跃（{ip}）")
 
     return ProbeResult(False, f"ISAPI {port} 不可达且无 ISUP 连接（{ip}）")
-
-
-async def probe_device_async(
-    device_id: str, ip: str | None, isapi_port: int | None = None
-) -> ProbeResult:
-    """异步包装（探测本身是阻塞的，丢线程池里跑）。"""
-    now = time.time()
-    cached = _PROBE_CACHE.get(device_id)
-    if cached and now - cached[0] < _ttl():
-        return ProbeResult(cached[1], "缓存")
-
-    result = await asyncio.to_thread(probe_device, device_id, ip, isapi_port)
-    _PROBE_CACHE[device_id] = (now, result.online)
-    return result
-
-
-def clear_probe_cache() -> None:
-    _PROBE_CACHE.clear()

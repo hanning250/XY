@@ -5,6 +5,7 @@
  * 页面（2026-10 改版：数据看板 + 实时画面 + 报警列表合并为同一页
  *       「报警看板」—— 一屏完成 看态势 → 看图 → 处置 闭环）：
  *   alarm     报警看板（态势带 + 实况画面 + 报警列表 + 详情）
+ *   analysis  数据分析（趋势/时段/工位/区域×类型汇总，自看板抽出）
  *   live      实时监控（值守大屏：左流右图，保留原交互）
  *   device    设备管理（admin 可改绑定车间；子账号只读本车间）
  *   workshop  车间管理（仅 admin）
@@ -25,6 +26,7 @@ import LicenseGate from '@/components/LicenseGate.vue'
 import NewAlarmToast from '@/components/NewAlarmToast.vue'
 import OverviewBand from '@/components/OverviewBand.vue'
 import LiveMonitorView from '@/views/LiveMonitorView.vue'
+import DataAnalysisView from '@/views/DataAnalysisView.vue'
 import DeviceManageView from '@/views/DeviceManageView.vue'
 import WorkshopManageView from '@/views/WorkshopManageView.vue'
 import UserManageView from '@/views/UserManageView.vue'
@@ -155,6 +157,7 @@ const pageTitle = computed(() => {
   const titles: Record<string, string> = {
     live: '实时监控',
     alarm: '报警看板',
+    analysis: '数据分析',
     device: '设备管理',
     workshop: '车间管理',
     user: '用户管理',
@@ -473,6 +476,9 @@ onUnmounted(() => {
         </div>
       </div>
 
+      <!-- 数据分析（自看板展开区独立） -->
+      <DataAnalysisView v-else-if="navKey === 'analysis'" :connected="connected" />
+
       <!-- 设备管理 -->
       <DeviceManageView v-else-if="navKey === 'device'" />
 
@@ -482,9 +488,9 @@ onUnmounted(() => {
       <!-- 用户管理（admin） -->
       <UserManageView v-else-if="navKey === 'user'" />
 
-      <!-- 连接状态（右下角小提示，不干扰主界面） -->
+      <!-- 连接状态：与右上角口径一致（重连中），避免「连接中 / 已断开」互相矛盾 -->
       <div v-if="!connected" class="offline-tip">
-        <el-icon><Monitor /></el-icon> 实时推送已断开，正在重连…
+        <el-icon><Monitor /></el-icon> 实时推送重连中…
       </div>
     </div>
 
@@ -599,9 +605,10 @@ export default { name: 'AlarmBoard' }
   position: fixed;
   right: 18px;
   bottom: 16px;
-  background: rgba(var(--danger-rgb), 0.14);
-  color: var(--danger);
-  border: 1px solid rgba(var(--danger-rgb), 0.35);
+  /* 重连中用警告色，不用危险红 —— 避免看起来像「服务挂了」 */
+  background: rgba(var(--warn-rgb), 0.14);
+  color: var(--warn);
+  border: 1px solid rgba(var(--warn-rgb), 0.35);
   border-radius: 6px;
   padding: 7px 12px;
   font-size: var(--fs-cap);

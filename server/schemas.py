@@ -311,14 +311,6 @@ class ChannelOut(BaseModel):
     camera_online_known: bool = False
 
 
-class ChannelSampleOut(BaseModel):
-    """通道的样本图片（用于识别该通道属于哪个车间）。"""
-
-    url: str
-    alarm_time: str | None = None
-    type_text: str = ""
-
-
 class ChannelAssignIn(BaseModel):
     """把通道指派给车间。workshop_code 留空 = 取消指派。"""
 
@@ -441,11 +433,17 @@ class MediaCleanupOut(BaseModel):
 # --------------------------------------------------------------------------
 class BatchDeleteIn(BaseModel):
     ids: list[str] = Field(default_factory=list, description="要删除的告警 id 列表")
-
-
-class BatchDeleteOut(BaseModel):
-    deleted_ids: list[str] = Field(default_factory=list)
-    files_removed: int = 0
+    all: bool = Field(
+        False,
+        description="true=按当前筛选删除可见告警（忽略 ids）；不带筛选则删账号可见范围内全部",
+    )
+    device_id: str | None = None
+    workshop: str | None = None
+    rule_name: str | None = None
+    start: datetime | None = None
+    end: datetime | None = None
+    has_image: bool | None = None
+    alarm_type: int | None = None
 
 
 # --------------------------------------------------------------------------

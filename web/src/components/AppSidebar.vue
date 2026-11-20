@@ -3,15 +3,17 @@
  * 左侧边栏 —— 多页面导航。
  *
  * ★ 按角色显示菜单：
- *   · 所有人：报警看板 / 实时监控 / 设备管理
+ *   · 所有人：报警看板 / 数据分析 / 实时监控 / 设备管理
  *   · 仅 admin（superuser）：车间管理 / 用户管理
  *
- * 「报警看板」= 数据看板 + 实况画面 + 报警列表 合并在同一页，是默认落地页；
- * 「实时监控」保留值守大屏形态。「系统设置」仍为占位（待开发）。
+ * 「报警看板」= 态势带 + 实况画面 + 报警列表，是默认落地页；
+ * 「数据分析」= 趋势/时段/工位/区域×类型汇总（从看板展开区独立成页）；
+ * 「实时监控」保留值守大屏形态。
  */
 import { computed } from 'vue'
 import {
   Bell,
+  DataAnalysis,
   Monitor,
   OfficeBuilding,
   User,
@@ -41,8 +43,10 @@ interface NavItem {
 
 const items = computed<NavItem[]>(() => [
   // ★ 2026-10：看板与报警合并为一页 —— 态势、实况画面、报警列表同屏，
-  //   新报警到达自动换图。默认落地页，红色角标 = 未处理数。
+  //   新报警到达自动换图。默认落地页。
   { key: 'alarm', label: '报警看板', icon: Bell },
+  // ★ 从看板「数据分析」展开区独立成页
+  { key: 'analysis', label: '数据分析', icon: DataAnalysis },
   // 值守大屏（左流右图 + 键盘操作）作为独立形态保留
   { key: 'live', label: '实时监控', icon: VideoCamera },
   { key: 'device', label: '设备管理', icon: Monitor },

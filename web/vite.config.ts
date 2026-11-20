@@ -10,6 +10,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: '0.0.0.0',
     port: 5173,
     proxy: {
       // 后端 FastAPI 默认 8088
@@ -17,6 +18,8 @@ export default defineConfig({
         target: 'http://127.0.0.1:8088',
         changeOrigin: true,
         ws: true, // ★ WebSocket 实时推送需要
+        timeout: 0,
+        proxyTimeout: 0,
       },
       '/openapi': {
         target: 'http://127.0.0.1:8088',

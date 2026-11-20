@@ -95,11 +95,6 @@ async def set_password(db: AsyncSession, *, user: User, password: str) -> None:
     await db.commit()
 
 
-async def set_enabled(db: AsyncSession, *, user: User, enabled: bool) -> None:
-    user.enabled = enabled
-    await db.commit()
-
-
 async def ensure_admin(
     db: AsyncSession, *, username: str = "admin", password: str | None = None
 ):

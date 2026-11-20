@@ -203,6 +203,8 @@ class IsapiClient:
         *,
         timeout: float,
         auth: str | None,
+        connection: str = "close",
+        extra_headers: list[str] | None = None,
     ) -> tuple[socket.socket, int, dict[str, str], bytes]:
         """发一次请求，返回 (socket, status, headers, 已读到的 body 片段)。
 
@@ -212,9 +214,11 @@ class IsapiClient:
         lines = [
             f"{method} {path} HTTP/1.1",
             f"Host: {self.cfg.host}:{self.cfg.port}",
-            "Connection: close",
+            f"Connection: {connection}",
             "User-Agent: ISUP-Platform/1.0",
         ]
+        if extra_headers:
+            lines.extend(extra_headers)
         if auth:
             lines.append(f"Authorization: {auth}")
         if body:
@@ -281,6 +285,35 @@ class IsapiClient:
                 out[tag] = m.group(1)
         return out
 
+    def get_jpeg(self, path_or_url: str, *, timeout: float = 12.0) -> bytes:
+        """按路径或完整 URL 下载 JPEG（告警报文 url 字段常用）。
+
+        例：http://192.168.1.64:80/picture/Streaming/tracks/103/?name=...
+        """
+        path = (path_or_url or "").strip()
+        if path.startswith("http://") or path.startswith("https://"):
+            # 只取 path+query，认证仍走本 client 的 host/port
+            from urllib.parse import urlsplit
+
+            parts = urlsplit(path)
+            path = parts.path or "/"
+            if parts.query:
+                path = f"{path}?{parts.query}"
+        if not path.startswith("/"):
+            path = "/" + path
+        status, headers, body = self.request("GET", path, timeout=timeout)
+        if status != 200:
+            raise IsapiError(f"get_jpeg HTTP {status} path={path[:80]}")
+        if not body or len(body) < 100:
+            raise IsapiError("get_jpeg 空响应")
+        soi = body.find(b"\xff\xd8")
+        if soi > 0:
+            body = body[soi:]
+        ctype = (headers.get("content-type") or "").lower()
+        if "jpeg" not in ctype and not body.startswith(b"\xff\xd8"):
+            raise IsapiError(f"get_jpeg 非 JPEG: {ctype[:40]}")
+        return body
+
     def channel_snapshot(self, channel: int = 1, *, stream: int = 1) -> bytes:
         """抓一路实时 JPEG（ISAPI Streaming picture）。
 
@@ -291,19 +324,132 @@ class IsapiClient:
         st = 1 if int(stream) <= 1 else 2
         track = ch * 100 + st
         path = f"/ISAPI/Streaming/channels/{track}/picture"
-        status, headers, body = self.request("GET", path, timeout=8.0)
+        return self.get_jpeg(path, timeout=8.0)
+
+    def iter_http_preview(self, channel: int = 1, *, stream: int = 2):
+        """打开设备 HTTP 预览（海康 MJPEG / multipart），按块 yield。
+
+        浏览器可直接用 <img src> 播放 multipart/x-mixed-replace。
+        返回 (content_type, iterator[bytes])。调用方必须把 iterator 耗完或丢弃以关 socket。
+        """
+        ch = max(1, int(channel))
+        st = 1 if int(stream) <= 1 else 2
+        track = ch * 100 + st
+        path = f"/ISAPI/Streaming/channels/{track}/httpPreview"
+        extra = ["Accept: multipart/x-mixed-replace, image/jpeg, */*"]
+
+        def _open(auth: str | None):
+            return self._raw_request(
+                "GET",
+                path,
+                b"",
+                timeout=8.0,
+                auth=auth,
+                connection="keep-alive",
+                extra_headers=extra,
+            )
+
+        s, status, headers, rest = _open(None)
+        if status == 401:
+            challenge = headers.get("www-authenticate", "")
+            if not challenge.lower().startswith("digest"):
+                s.close()
+                raise IsapiError(f"预览需要 Digest 认证，但收到: {challenge[:80]}")
+            auth = _build_digest_auth(
+                "GET", path, challenge, self.cfg.username, self.cfg.password
+            )
+            s.close()
+            s, status, headers, rest = _open(auth)
         if status != 200:
-            raise IsapiError(f"snapshot HTTP {status} channel={ch}")
-        if not body or len(body) < 100:
-            raise IsapiError("snapshot 空响应")
-        # 少数固件包一层 multipart；有 JPEG SOI 就直接用
-        soi = body.find(b"\xff\xd8")
-        if soi > 0:
-            body = body[soi:]
-        ctypeype = (headers.get("content-type") or "").lower()
-        if "jpeg" not in ctypeype and not body.startswith(b"\xff\xd8"):
-            raise IsapiError(f"snapshot 非 JPEG: {ctype[:40]}")
-        return body
+            snippet = rest[:200].decode("utf-8", "replace")
+            s.close()
+            raise IsapiError(f"httpPreview HTTP {status} track={track} {snippet}")
+
+        ctype = headers.get("content-type") or "multipart/x-mixed-replace; boundary=--boundary"
+
+        def _iter():
+            try:
+                if rest:
+                    yield rest
+                s.settimeout(20.0)
+                while True:
+                    chunk = s.recv(CHUNK)
+                    if not chunk:
+                        break
+                    yield chunk
+            finally:
+                try:
+                    s.close()
+                except OSError:
+                    pass
+
+        return ctype, _iter()
+
+    def open_get_stream(
+        self,
+        path: str,
+        *,
+        extra_headers: list[str] | None = None,
+        timeout: float = 10.0,
+    ) -> tuple[socket.socket, dict[str, str], bytes]:
+        """Digest GET 长连接（alertStream / httpPreview）。"""
+
+        def _open(auth: str | None):
+            return self._raw_request(
+                "GET",
+                path,
+                b"",
+                timeout=timeout,
+                auth=auth,
+                connection="keep-alive",
+                extra_headers=extra_headers or [],
+            )
+
+        s, status, headers, rest = _open(None)
+        if status == 401:
+            challenge = headers.get("www-authenticate", "")
+            if not challenge.lower().startswith("digest"):
+                s.close()
+                raise IsapiError(f"需要 Digest 认证，但收到: {challenge[:80]}")
+            auth = _build_digest_auth(
+                "GET", path, challenge, self.cfg.username, self.cfg.password
+            )
+            s.close()
+            s, status, headers, rest = _open(auth)
+        if status != 200:
+            s.close()
+            raise IsapiError(f"GET {path} HTTP {status}")
+        return s, headers, rest
+
+    def iter_snapshot_mjpeg(self, channel: int = 1, *, stream: int = 2, interval: float = 0.08):
+        """设备不支持 httpPreview 时：服务端连续抓拍拼成 MJPEG。
+
+        首帧失败立即抛出（由 API 转 503）；开流后偶发失败可容忍，连续 miss 过多再退出。
+        """
+        import time
+
+        boundary = b"frame"
+        misses = 0
+        got_first = False
+        while True:
+            try:
+                jpeg = self.channel_snapshot(channel, stream=stream)
+                misses = 0
+                got_first = True
+                yield (
+                    b"--" + boundary + b"\r\n"
+                    b"Content-Type: image/jpeg\r\n"
+                    + f"Content-Length: {len(jpeg)}\r\n\r\n".encode()
+                    + jpeg
+                    + b"\r\n"
+                )
+            except (IsapiError, OSError):
+                if not got_first:
+                    raise
+                misses += 1
+                if misses >= 10:
+                    raise
+            time.sleep(interval)
 
     def download_segment(
         self,

@@ -39,8 +39,6 @@ logger = logging.getLogger(__name__)
 # 抓取用的原始 PS 流放这里，转码成功后即删
 RAW_DIR = PROJECT_ROOT / "data" / "playback_raw"
 
-# 单次抓取的最长等待（秒）——超过就认定设备没给数据
-PLAYBACK_TIMEOUT_SECONDS = 180
 # ffmpeg 转码超时（秒）
 TRANSCODE_TIMEOUT_SECONDS = 120
 
@@ -258,36 +256,20 @@ def probe_duration_seconds(path: Path) -> int | None:
 
 
 def parse_alarm_time(value: str) -> datetime:
-    """解析告警时间。
+    """解析告警时间为东八区 naive，供 ISAPI/SDK 按设备 OSD 时间取流。
 
-    ★ 与同事版本的差异：**不再默认 +08:00**。
-      同事把所有 19 字符的裸时间都当成 +08:00，但设备可能上报 UTC
-      （SDK 有 byLocalOrUTC 开关），那会导致回放窗口整体偏 8 小时 ——
-      抓到的是完全无关的画面，而且看起来还"成功"了，比报错更危险。
-
-      这里显式列出支持的格式，解析不了就抛错，让调用方标 failed。
+    不能用 datetime.astimezone()（跟操作系统时区走）。本机是 UTC 时，
+    15:00+08:00 会被收成 07:00，录像就抓到早上。
     """
+    from server.services.timeutil import parse_any
+
     text = (value or "").strip()
     if not text:
         raise ValueError("告警时间为空")
-
-    # ISO 带时区偏移的，交给 fromisoformat，并转成本地 naive
-    if text.endswith("Z") or "+" in text[10:] or text.count("-") > 2:
-        with contextlib.suppress(ValueError):
-            dt = datetime.fromisoformat(text.replace("Z", "+00:00"))
-            return dt.astimezone().replace(tzinfo=None) if dt.tzinfo else dt
-
-    for fmt in (
-        "%Y-%m-%dT%H:%M:%S",
-        "%Y-%m-%d %H:%M:%S",
-        "%Y-%m-%dT%H:%M:%S.%f",
-        "%Y-%m-%d %H:%M:%S.%f",
-        "%Y/%m/%d %H:%M:%S",
-    ):
-        with contextlib.suppress(ValueError):
-            return datetime.strptime(text, fmt)
-
-    raise ValueError(f"无法解析告警时间: {value!r}")
+    dt = parse_any(text)
+    if dt is None:
+        raise ValueError(f"无法解析告警时间: {value!r}")
+    return dt
 
 
 class PlaybackService:
@@ -295,13 +277,11 @@ class PlaybackService:
 
     使用方式：
         svc = PlaybackService()
-        svc.register_sms(sms)          # 注入 SDK 的 smsClass 实例
         svc.start()
         await svc.capture(alarm_id, device_id, channel, alarm_time, on_done=...)
     """
 
     def __init__(self) -> None:
-        self._sms = None
         self._loop: asyncio.AbstractEventLoop | None = None
         self._queue: queue.Queue[str] = queue.Queue()
         self._workers: list[threading.Thread] = []
@@ -323,10 +303,6 @@ class PlaybackService:
         self._window_lock = threading.Lock()
 
     # ------------------------------------------------------------ 生命周期
-    def register_sms(self, sms) -> None:
-        """注入 SDK smsClass 实例（由 isup_runtime 在启动时调用）。"""
-        self._sms = sms
-
     def bind_loop(self, loop: asyncio.AbstractEventLoop) -> None:
         self._loop = loop
 
@@ -470,16 +446,8 @@ class PlaybackService:
           上千条 —— 设备回放是独占资源（约 1 条/分钟），队列无界会把
           设备连接占死数小时。
         """
-        if self._sms is None:
-            # ★★ 2026-10-27：不再静默！
-            #
-            #   原来只打日志就 return False，调用方（correlator）丢弃返回值，
-            #   结果告警永远停在 not_requested，看起来像"没安排抓取"，
-            #   实际是"安排失败"。现场排查时完全看不出原因。
-            #
-            #   现在把失败原因写进 alarm.video_error + status=failed，
-            #   前端和甲方接口都能直接看到「为什么没有视频」。
-            reason = "回放服务未注入 SMS（ISUP SDK 未启动或 SMS 初始化失败）"
+        if not self._isapi_enabled():
+            reason = "录像抓取未配置（ISAPI 地址/密码未配齐）"
             logger.error("视频抓取失败 alarm=%s：%s", alarm_id, reason)
             self._mark_failed_async(alarm_id, reason)
             return False
@@ -799,26 +767,6 @@ class PlaybackService:
         with self._active_lock:
             return alarm_id in self._cancelled
 
-    def _reset_playback_listen(self) -> None:
-        """确保回放监听句柄是「未开启」状态。
-
-        ★ 防御性措施：如果上一次回放异常退出，句柄可能残留 >= 0。
-          此时 sms._ensure_listen 会认为监听已开启而跳过启动，
-          本次回放就收不到任何推流，只能等超时。
-
-          这里主动停掉并复位，保证每次回放都是从干净状态开始。
-        """
-        sms = self._sms
-        if sms is None:
-            return
-        handle = getattr(sms, "playbackListenHandle", -1)
-        if handle is None or handle < 0:
-            return
-        logger.warning("检测到残留的回放监听句柄 %s，先释放再重开", handle)
-        with contextlib.suppress(Exception):
-            sms.smsDLL.NET_ESTREAM_StopListenPlayBack(handle)
-        sms.playbackListenHandle = -1
-
     # ------------------------------------------------------------ worker
     def _worker(self) -> None:
         while self._running:
@@ -887,17 +835,10 @@ class PlaybackService:
             set_playback_failed(alarm_id, f"告警时间无法解析: {alarm_time_raw!r}")
             return
 
-        user_id = self._resolve_user_id(device_id)
-        if user_id is None:
-            logger.warning("回放任务: 设备 %s 不在线，无法抓取", device_id)
-            set_playback_failed(
-                alarm_id,
-                f"设备未在线: {device_id or '(未知设备)'} —— 设备重新上线后重试",
-            )
-            self._fail_plan_peers(
-                device_id, channel, alarm_dt,
-                f"设备未在线: {device_id or '(未知设备)'} —— 设备重新上线后重试",
-            )
+        if not self._isapi_enabled():
+            logger.warning("回放任务: ISAPI 未配置，无法抓取")
+            set_playback_failed(alarm_id, "ISAPI 未配置 host/password")
+            self._fail_plan_peers(device_id, channel, alarm_dt, "ISAPI 未配置")
             return
 
         # ★ 抓取区间：告警时刻 **前 N 秒 ~ 后 M 秒**
@@ -1056,7 +997,6 @@ class PlaybackService:
         #   4.5 倍速，容量从缺口 3 倍变成余量 33%。
         #   （详见 services/isapi_client.py 顶部的实测数据）
         #
-        #   失败时自动降级到 SDK 回放，保证不会因为 ISAPI 不可用而丢视频。
         if self._isapi_enabled():
             try:
                 n = self._capture_via_isapi(
@@ -1070,94 +1010,12 @@ class PlaybackService:
                         alarm_id, raw_path, out_path, device_id, channel, alarm_dt
                     )
                     return
-                logger.warning("ISAPI 下载返回 0 字节，降级到 SDK 回放 alarm=%s", alarm_id)
+                logger.warning("ISAPI 下载返回 0 字节 alarm=%s", alarm_id)
             except Exception as exc:
-                logger.warning(
-                    "ISAPI 下载失败（%s），降级到 SDK 回放 alarm=%s", exc, alarm_id
-                )
-
-        started = False
-        try:
-            # ★★ 2026-10-23 并发改造：**不再每次重置监听**。
-            #
-            #   原来每次回放前都 _reset_playback_listen()：
-            #       NET_ESTREAM_StopListenPlayBack(handle) → handle = -1
-            #       → startPlayBackListen_FILE() 重新建监听
-            #
-            #   单路时没问题，但**并发时是致命的**：
-            #     · worker A 刚建好监听，worker B 进来把它拆掉
-            #     · 反复 Start/Stop 同一监听会让 SDK 内部 double free
-            #       → 进程直接消失（实测 10-23 崩了三次，151ms 内二次 Stop）
-            #
-            #   现在改为：监听**进程级只建一次**，之后所有回放复用。
-            #   只有句柄丢失（< 0）时才重建。
-            #   这是 SDK 回放 listen 的正确用法：一个 listen 可以承接多路
-            #   会话，每路通过 PLAYBACK_NEWLINK_CB 的 linkHandle 区分。
-            if getattr(self._sms, "playbackListenHandle", -1) is None or \
-                    getattr(self._sms, "playbackListenHandle", -1) < 0:
-                self._sms.startPlayBackListen_FILE()
-            from src.Common import glo
-
-            glo.set_value("stopPlayBackFlag", None)
-
-            started = self._sms.PlayBackByTime(
-                lchannel=channel,
-                user_id=user_id,
-                start_dt=start_dt,
-                stop_dt=end_dt,
-                output_path=str(raw_path),
-            )
-            if not started:
-                set_playback_failed(alarm_id, "StartPlayBack 未成功（设备可能无该时段录像）")
-                self._fail_plan_peers(
-                    device_id, channel, alarm_dt,
-                    "StartPlayBack 未成功（设备可能无该时段录像）",
-                )
-                return
-
-            # 等回放结束信令
-            deadline = time.time() + PLAYBACK_TIMEOUT_SECONDS
-            while not glo.get_value("stopPlayBackFlag"):
-                if self._is_cancelled(alarm_id):
-                    logger.info("回放任务已被取消 alarm=%s", alarm_id)
-                    self._release_plan(device_id, channel, alarm_dt)
-                    return
-                if time.time() >= deadline:
-                    logger.warning("回放抓取超时 alarm=%s", alarm_id)
-                    set_playback_failed(alarm_id, "抓取超时")
-                    self._fail_plan_peers(device_id, channel, alarm_dt, "抓取超时")
-                    return
-                time.sleep(1)
-        finally:
-            # ★★ 2026-10-23 并发改造：改用**会话级**停止，不再调 stopPlayBackByTime。
-            #
-            #   原因：stopPlayBackByTime 会 NET_ESTREAM_StopListenPlayBack 拆掉
-            #   回放监听 —— 多路并发时会把其它路的监听一起拆掉，而且反复
-            #   Start/Stop 监听会让 SDK 内部 double free 导致进程崩溃
-            #   （实测 10-23 连续三次）。
-            #
-            #   stopPlayBack_session_only 只停这一路会话 + 关这一路的文件，
-            #   监听和其它路都不受影响。成功与否都要调（清句柄）。
-            with contextlib.suppress(Exception):
-                self._sms.stopPlayBack_session_only(
-                    getattr(self._sms, "m_lPlayBackLinkHandle", None)
-                )
-
-        # ---- 到这里说明抓取结束，检查产物 ----
-        if not _file_has_data(raw_path):
-            logger.warning("回放抓取结果为空 alarm=%s", alarm_id)
-            with contextlib.suppress(OSError):
-                raw_path.unlink()
-            set_playback_failed(alarm_id, "设备返回空流（该时段可能无录像）")
-            self._fail_plan_peers(
-                device_id, channel, alarm_dt, "设备返回空流（该时段可能无录像）"
-            )
-            return
-
-        # ---- 转码 + 就绪（与 ISAPI 路径共用）----
-        self._finish_capture(
-            alarm_id, raw_path, out_path, device_id, channel, alarm_dt
-        )
+                logger.warning("ISAPI 下载失败（%s）alarm=%s", exc, alarm_id)
+        set_playback_failed(alarm_id, "ISAPI 录像下载失败")
+        self._fail_plan_peers(device_id, channel, alarm_dt, "ISAPI 录像下载失败")
+        return
 
     def _finish_capture(
         self,
@@ -1272,75 +1130,6 @@ class PlaybackService:
                 logger.info("ISAPI: 该时段无录像 alarm=%s（%s~%s）",
                             alarm_id, start_dt, end_dt)
             raise
-
-    # ------------------------------------------------------------ 设备解析
-    def _resolve_user_id(self, device_id: str) -> int | None:
-        """按 device_id 找登录句柄。
-
-        ★ 用快照遍历，避免 SDK 线程正在增删 deviceUserMap 时
-          「dictionary changed size during iteration」。
-
-        ★★ 2026-XX 修复「获取不了视频」：
-          服务重启后 SDK 要重新监听，设备**约 6~10 秒后**才重连注册；
-          设备断线重连时也会短暂摘掉映射。用户恰好在这个空窗点
-          「获取视频」，就会被判「设备不在线」直接失败 ——
-          日志实测出现过 14:36:26 提交、14:36:29 判离线、
-          14:36:32 设备才上线的经典 3 秒差。
-
-          因此这里等待窗口放到 ~10 秒（覆盖重启/重连空窗），
-          期间每 0.5 秒查一次映射。
-        """
-        import time
-
-        from src.Common import glo
-
-        deadline = time.monotonic() + _DEVICE_WAIT_SECONDS
-        attempt = 0
-        while True:
-            attempt += 1
-            devices = dict(glo.get_value("deviceUserMap", {}) or {})
-            if device_id and device_id in devices:
-                if attempt > 1:
-                    logger.info("设备 %s 已上线，继续抓取（等待 %.1fs）", device_id, attempt * 0.5)
-                return devices[device_id]
-
-            preferred = glo.get_value("PlaybackDeviceID", "")
-            if preferred and preferred in devices:
-                return devices[preferred]
-
-            # 单设备场景：设备ID对不上（报文ID ≠ 注册ID）时用唯一句柄兜底
-            if len(devices) == 1:
-                return next(iter(devices.values()))
-
-            if time.monotonic() >= deadline:
-                break
-            time.sleep(0.5)
-
-        # 最后兜底：库里标记在线（设备可能刚上线、映射还没落）就取任意句柄
-        devices = dict(glo.get_value("deviceUserMap", {}) or {})
-        if devices and self._device_online_in_db(device_id):
-            logger.info("设备 %s 库中在线，用现有句柄兜底抓取", device_id)
-            return next(iter(devices.values()))
-        return None
-
-    @staticmethod
-    def _device_online_in_db(device_id: str) -> bool:
-        """查库确认该设备当前是否在线（SDK 映射为空时的第二判据）。"""
-        if not device_id:
-            return False
-        import sqlite3
-
-        from server.services.playback_registry import DB_PATH
-
-        try:
-            with sqlite3.connect(str(DB_PATH), timeout=5.0) as conn:
-                row = conn.execute(
-                    "SELECT online FROM device WHERE device_id = ?", (device_id,)
-                ).fetchone()
-                return bool(row and row[0])
-        except sqlite3.Error:
-            return False
-
 
 # 进程级单例（由 main.py 的 lifespan 启动）
 playback_service = PlaybackService()

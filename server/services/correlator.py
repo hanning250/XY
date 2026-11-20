@@ -166,6 +166,10 @@ class Correlator:
         )
         if not device_id:
             device_id = parsed.device_id
+        # 设备偶发上报字面量占位符 "@deviceId@"（未替换的模板），当作无效
+        device_id = _sanitize_device_id(device_id) or (
+            self._settings.isapi_device_id or "box001"
+        )
 
         # ★★★ 2026-10-26：收到报警时，顺便把设备 IP 补进 device 表。
         #
@@ -354,32 +358,30 @@ class Correlator:
             # ---- 情况 A：报文自带图片，立即配对 ----
             linked = 0
             for pic in inline_pics:
-                data = pic.get("data") or b""
-                source_name = pic.get("name") or ""
-                file_hash = media_svc.decide_file_hash(source_name, data)
-                width, height = media_svc.probe_jpeg_size(data)
-                path = media_svc.build_storage_path(
-                    file_hash=file_hash, source_name=source_name or f"{file_hash}.jpg"
-                )
-                try:
-                    path.write_bytes(data)
-                except OSError:
-                    logger.exception("写入告警报文内嵌图片失败: %s", path)
-                    continue
-
-                await alarm_crud.add_image(
+                linked += await self._attach_image_bytes(
                     db,
-                    alarm=alarm,
-                    alarm_id=alarm.id,
-                    file_hash=file_hash,
-                    file_path=media_svc.relative_to_project(path),
-                    source_name=source_name,
-                    width=width,
-                    height=height,
-                    file_size=len(data),
+                    alarm,
+                    data=pic.get("data") or b"",
+                    source_name=pic.get("name") or "",
                     linked_by="ams",
                 )
-                linked += 1
+
+            # ---- 情况 A2：HCNet/ISAPI 告警常只给 url，不内嵌二进制 ----
+            #   实测 AIOP_Polling_Snap：byPicturesNumber=0，但 JSON 有
+            #   url=http://设备/picture/Streaming/tracks/... 可 Digest 下载。
+            #   旧逻辑只认 inline_pictures / ISUP SS 队列 → 看板全是「无图」。
+            if not linked:
+                url_pic = await self._download_alarm_url_picture(
+                    content_raw, content_json, structured
+                )
+                if url_pic:
+                    linked += await self._attach_image_bytes(
+                        db,
+                        alarm,
+                        data=url_pic["data"],
+                        source_name=url_pic.get("name") or "",
+                        linked_by="url",
+                    )
 
             if linked:
                 await alarm_crud.set_alarm_status(db, alarm, AlarmStatus.COMPLETE)
@@ -430,6 +432,80 @@ class Correlator:
 
         # 顺序配对已在上面的 SessionLocal 块内完成（_pair_pending_image），
         # 不再有「内存队列回填」这一步。
+
+    async def _attach_image_bytes(
+        self,
+        db,
+        alarm,
+        *,
+        data: bytes,
+        source_name: str,
+        linked_by: str,
+    ) -> int:
+        """把一段 JPEG 字节落盘并挂到告警上。成功返回 1，失败 0。"""
+        if not data:
+            return 0
+        file_hash = media_svc.decide_file_hash(source_name, data)
+        width, height = media_svc.probe_jpeg_size(data)
+        path = media_svc.build_storage_path(
+            file_hash=file_hash, source_name=source_name or f"{file_hash}.jpg"
+        )
+        try:
+            path.write_bytes(data)
+        except OSError:
+            logger.exception("写入告警图片失败: %s", path)
+            return 0
+        await alarm_crud.add_image(
+            db,
+            alarm=alarm,
+            alarm_id=alarm.id,
+            file_hash=file_hash,
+            file_path=media_svc.relative_to_project(path),
+            source_name=source_name,
+            width=width,
+            height=height,
+            file_size=len(data),
+            linked_by=linked_by,
+        )
+        return 1
+
+    async def _download_alarm_url_picture(
+        self,
+        content_raw,
+        content_json,
+        structured: dict,
+    ) -> dict | None:
+        """从告警报文 url 字段下载抓拍图（HCNet/ISAPI 常见形态）。"""
+        url = _extract_picture_url(content_raw, content_json, structured)
+        if not url:
+            return None
+        host = (
+            (structured or {}).get("ipAddress")
+            or getattr(self._settings, "isapi_host", "")
+            or ""
+        ).strip()
+        if not host:
+            # url 自带 host 时仍可用配置的 isapi 账密去下
+            host = (getattr(self._settings, "isapi_host", "") or "").strip()
+        password = getattr(self._settings, "isapi_password", "") or ""
+        if not host or not password:
+            logger.warning("告警含图片 url 但未配置 ISAPI 账密，无法下载: %s", url[:80])
+            return None
+        port = int(getattr(self._settings, "isapi_port", 80) or 80)
+        username = getattr(self._settings, "isapi_username", None) or "admin"
+        try:
+            from server.services.isapi_client import get_client
+
+            client = get_client(host, port, username, password)
+            # 下载是阻塞 socket；丢线程池避免卡住聚合协程
+            data = await asyncio.to_thread(client.get_jpeg, url)
+        except Exception:
+            logger.warning("按 url 下载告警图片失败: %s", url[:120], exc_info=True)
+            return None
+        name = url.rsplit("/", 1)[-1].split("?", 1)[0] or "alarm.jpg"
+        if not name.lower().endswith((".jpg", ".jpeg")):
+            name = f"{name}.jpg" if name else "alarm.jpg"
+        return {"name": name, "data": data}
 
     def _maybe_auto_capture_video(self, alarm) -> None:
         """告警落库后自动申请抓取视频片段（非阻塞）。
@@ -863,3 +939,46 @@ class Correlator:
             payload["workshop_name"] = None
 
         await self._bus.publish_alarm(payload)
+
+
+def _sanitize_device_id(device_id: str | None) -> str:
+    """去掉设备未替换的模板占位符（如 @deviceId@）。"""
+    s = (device_id or "").strip()
+    if not s:
+        return ""
+    if s.startswith("@") and s.endswith("@") and len(s) >= 3:
+        return ""
+    if s.lower() in {"unknown", "null", "none", "n/a"}:
+        return ""
+    return s
+
+
+def _extract_picture_url(content_raw, content_json, structured: dict) -> str:
+    """从告警报文里抽出抓拍图 URL。"""
+    for src in (structured, content_json):
+        if isinstance(src, dict):
+            u = (src.get("url") or src.get("imageUrl") or src.get("picUrl") or "").strip()
+            if u.startswith("http"):
+                return u
+    text = content_raw if isinstance(content_raw, str) else ""
+    if not text:
+        return ""
+    # JSON
+    if text.lstrip().startswith("{"):
+        try:
+            obj = json.loads(text)
+            if isinstance(obj, dict):
+                u = (obj.get("url") or obj.get("imageUrl") or obj.get("picUrl") or "").strip()
+                if u.startswith("http"):
+                    return u
+        except (ValueError, TypeError):
+            pass
+    # XML <url>...</url>
+    import re
+
+    m = re.search(r"<url>([^<]+)</url>", text, re.I)
+    if m:
+        u = m.group(1).strip()
+        if u.startswith("http"):
+            return u
+    return ""

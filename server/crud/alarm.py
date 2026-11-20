@@ -13,7 +13,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from server.crud.filters import AlarmFilter
 from server.crud.pagination import Cursor
 from server.crud.scoping import is_denied, visible_in, workshop_scope
-from server.models import Alarm, AlarmImage, AlarmStatus, VideoStatus, utcnow
+from server.models import (
+    Alarm,
+    AlarmImage,
+    AlarmStatus,
+    PendingImage,
+    VideoSession,
+    VideoStatus,
+    utcnow,
+)
 
 
 async def find_recent_duplicate(
@@ -574,26 +582,6 @@ async def expire_overdue_alarms(db: AsyncSession, *, now: datetime | None = None
     return rows
 
 
-async def list_alarms_since(
-    db: AsyncSession,
-    *,
-    since: datetime,
-    limit: int = 200,
-    device_id: str | None = None,
-) -> list[Alarm]:
-    """★ 增量拉取：按时间游标取新告警（升序，适合轮询）。"""
-    conds = [Alarm.alarm_time > since]
-    if device_id:
-        conds.append(Alarm.device_id == device_id)
-
-    stmt = (
-        select(Alarm)
-        .where(*conds)
-        .order_by(Alarm.alarm_time.asc(), Alarm.id.asc())
-        .limit(limit)
-    )
-    return list((await db.execute(stmt)).scalars().all())
-
 # ---------------------------------------------------------------------------
 # ★ 人工处置
 # ---------------------------------------------------------------------------
@@ -1044,21 +1032,30 @@ async def count_daily_trend(
 _MEDIA_URL_MARKER = "/media/"
 
 
-def _media_paths_of(alarm: Alarm) -> list[str]:
+def _url_to_rel(url: str | None) -> str | None:
+    if not url:
+        return None
+    if _MEDIA_URL_MARKER in url:
+        return "media/" + url.split(_MEDIA_URL_MARKER, 1)[1]
+    if url.startswith("storage/") or url.startswith("media/"):
+        return url.split("?", 1)[0]
+    return None
+
+
+def _media_paths_of(alarm: Alarm, extra_urls: list[str] | None = None) -> list[str]:
     """一条告警关联的所有媒体**相对项目根**的路径。
 
-    · 图片：直接用落库的 file_path（本来就是 storage/... 相对路径）
-    · 视频：video_url 可能是 `/media/video/x.mp4`，也可能是绝对 URL
-      `http://host/media/video/x.mp4` —— 两种都按 `/media/` 截断，
-      统一成 `media/video/x.mp4`。
+    · 图片：落库 file_path（storage/...）
+    · 视频：video_url / 会话 url/handle → media/...
     """
     paths: list[str] = []
     for img in alarm.images:
         if img.file_path:
             paths.append(img.file_path)
-    if alarm.video_url and _MEDIA_URL_MARKER in alarm.video_url:
-        tail = alarm.video_url.split(_MEDIA_URL_MARKER, 1)[1]
-        paths.append("media/" + tail)
+    for raw in (alarm.video_url, *(extra_urls or [])):
+        rel = _url_to_rel(raw)
+        if rel:
+            paths.append(rel)
     return paths
 
 
@@ -1074,8 +1071,28 @@ async def delete_alarm(db: AsyncSession, alarm_id: str) -> list[str] | None:
     if alarm is None:
         return None
 
-    paths = _media_paths_of(alarm)
+    sess_rows = list(
+        (
+            await db.execute(
+                select(VideoSession).where(VideoSession.alarm_id == alarm_id)
+            )
+        ).scalars().all()
+    )
+    extras = [raw for s in sess_rows for raw in (s.url, s.handle) if raw]
+    pend_rows = list(
+        (
+            await db.execute(
+                select(PendingImage).where(PendingImage.matched_alarm_id == alarm_id)
+            )
+        ).scalars().all()
+    )
+    extras.extend(p.file_path for p in pend_rows if p.file_path)
+    paths = _media_paths_of(alarm, extras)
 
+    if pend_rows:
+        await db.execute(
+            delete(PendingImage).where(PendingImage.matched_alarm_id == alarm_id)
+        )
     await db.delete(alarm)
     await db.commit()
     return paths
@@ -1095,14 +1112,64 @@ async def delete_alarms(db: AsyncSession, alarm_ids: list[str]) -> tuple[list[st
     if not rows:
         return [], {}
 
+    found_ids = [a.id for a in rows]
+    sess_rows = list(
+        (
+            await db.execute(
+                select(VideoSession).where(VideoSession.alarm_id.in_(found_ids))
+            )
+        ).scalars().all()
+    )
+    extra_by: dict[str, list[str]] = {}
+    for s in sess_rows:
+        extra_by.setdefault(s.alarm_id, [])
+        for raw in (s.url, s.handle):
+            if raw:
+                extra_by[s.alarm_id].append(raw)
+
+    pend_rows = list(
+        (
+            await db.execute(
+                select(PendingImage).where(PendingImage.matched_alarm_id.in_(found_ids))
+            )
+        ).scalars().all()
+    )
+    for p in pend_rows:
+        if p.matched_alarm_id and p.file_path:
+            extra_by.setdefault(p.matched_alarm_id, []).append(p.file_path)
+
     paths_by_alarm: dict[str, list[str]] = {
-        alarm.id: _media_paths_of(alarm) for alarm in rows
+        alarm.id: _media_paths_of(alarm, extra_by.get(alarm.id)) for alarm in rows
     }
 
-    found_ids = [a.id for a in rows]
+    await db.execute(
+        delete(PendingImage).where(PendingImage.matched_alarm_id.in_(found_ids))
+    )
+    await db.execute(delete(VideoSession).where(VideoSession.alarm_id.in_(found_ids)))
+    await db.execute(delete(AlarmImage).where(AlarmImage.alarm_id.in_(found_ids)))
     await db.execute(delete(Alarm).where(Alarm.id.in_(found_ids)))
     await db.commit()
     return found_ids, paths_by_alarm
+
+
+async def list_alarm_ids(
+    db: AsyncSession,
+    *,
+    f: AlarmFilter | None = None,
+    workshops: list[str] | None = None,
+    limit: int = 500,
+) -> list[str]:
+    """按筛选取告警 id（分批删除用）。"""
+    flt = f or AlarmFilter(workshops=workshops)
+    if flt.is_denied():
+        return []
+    stmt = (
+        select(Alarm.id)
+        .where(*flt.to_conditions())
+        .order_by(Alarm.created_at.asc())
+        .limit(limit)
+    )
+    return list((await db.execute(stmt)).scalars().all())
 
 
 # ---------------------------------------------------------------------------

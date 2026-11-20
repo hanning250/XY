@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Node / frontend
+web/node_modules/
+web/dist/
+
+# Local env & secrets
+server/.env
+*.pem
+
+# Runtime data
+data/
+storage/
+media/
+outputFiles/
+IsupSDKLog/
+*.db
+*.db-shm
+*.db-wal
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

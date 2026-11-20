@@ -144,17 +144,12 @@ def _flatten(elem: ET.Element) -> dict[str, str]:
 def _parse_datetime(value: str) -> datetime | None:
     if not value:
         return None
-    # 2026-09-17T14:39:36+08:00
-    for fmt in ("%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S", "%Y-%m-%d %H:%M:%S"):
-        try:
-            dt = datetime.strptime(value, fmt)
-            # 统一转成 naive 本地时间，与 DB 里的口径一致
-            if dt.tzinfo is not None:
-                dt = dt.astimezone().replace(tzinfo=None)
-            return dt
-        except ValueError:
-            continue
-    return None
+    # 必须转到东八区 naive，不能用 dt.astimezone()：
+    # 服务器时区经常是 UTC，15:00+08:00 会被收成 07:00，
+    # 列表像早上、录像也去早上时段里抓。
+    from server.services.timeutil import parse_any
+
+    return parse_any(value)
 
 
 def _int(value: str | None, default: int = 1) -> int:

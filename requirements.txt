@@ -9,12 +9,14 @@
 
 # --- Web 框架 ---
 fastapi>=0.115
-uvicorn>=0.32
-python-multipart>=0.0.9
+# ★ 必须带 [standard]：裸 uvicorn 没有 websockets/wsproto，
+#   /api/ws/alarms 握手会被当成普通 HTTP → 404，前端一直「实时推送重连中」。
+uvicorn[standard]>=0.32
+# python-multipart：仅当接口用 Form / UploadFile 时需要（当前全是 JSON，未用）
 
 # --- 数据库（SQLite + async）---
+# greenlet 由 sqlalchemy[asyncio] 自动带入，不必单独声明
 sqlalchemy[asyncio]>=2.0
-greenlet>=3.0
 aiosqlite>=0.20
 
 # --- 配置 ---

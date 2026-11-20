@@ -1,46 +1,22 @@
 # -*- coding: utf-8 -*-
-"""全局配置。
-
-设计要点：
-  1. 复用现有 resources/conf/isupConf.json，但**不依赖 cwd**（原 ConfRead 用 "../../" 相对路径，
-     服务化后必然读不到）。这里基于项目根目录计算绝对路径。
-  2. 告警图片归档目录、SQLite 路径等新增配置走环境变量 / .env，避免污染原 isupConf.json。
-"""
+"""全局配置。告警图片归档、SQLite 等走环境变量 / server/.env。"""
 
 from __future__ import annotations
 
-import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # server/config.py -> server/ -> 项目根
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-RESOURCES_DIR = PROJECT_ROOT / "resources"
-ISUP_CONF_PATH = RESOURCES_DIR / "conf" / "isupConf.json"
-
-# 告警图片归档根目录（SSCallBack 落盘用）。原实现是 storage/ 平铺，这里改为按日期分层。
+# 告警图片归档根目录。按日期分层。
 STORAGE_DIR = PROJECT_ROOT / "storage"
 # 同事的解码服务产出的视频，我方托管目录（VideoProvider=file 时使用）
 MEDIA_VIDEO_DIR = PROJECT_ROOT / "media" / "video"
 # ffmpeg HLS 输出目录（VideoProvider=hls 时使用）
 MEDIA_HLS_DIR = PROJECT_ROOT / "media" / "hls"
-
-
-def _strip_json_comments(text: str) -> str:
-    """isupConf.json 里带 // 注释，标准 json 解析不了，沿用原 ConfRead 的做法。"""
-    return "\n".join(
-        line for line in text.splitlines() if not line.strip().startswith("//")
-    )
-
-
-def load_isup_conf() -> dict[str, Any]:
-    """读取 ISUP 配置文件（绝对路径，与 cwd 无关）。"""
-    text = ISUP_CONF_PATH.read_text(encoding="utf-8")
-    return json.loads(_strip_json_comments(text))
 
 
 class Settings(BaseSettings):
@@ -85,7 +61,7 @@ class Settings(BaseSettings):
     # JWT
     jwt_secret: str = "CHANGE_ME_IN_PRODUCTION"
     jwt_algorithm: str = "HS256"
-    jwt_expire_minutes: int = 43200  # 默认 30 天
+    jwt_expire_minutes: int = 1576800  # 默认 3 年（3×365×24×60）
 
     # ★ 启动时确保存在的管理员（auth_mode=jwt 时生效）
     #   账号不存在 → 创建；已存在且配置了密码 → 按环境变量同步密码（便于本机部署）。
@@ -316,6 +292,19 @@ class Settings(BaseSettings):
     isapi_download_timeout: float = 60.0
     # 单段最多允许下载多少秒的录像（防止误传超大区间把带宽打满）
     isapi_max_segment_seconds: int = 180
+    # 拉 NVR 的 ISAPI 报警长连接（/ISAPI/Event/notification/alertStream）
+    # 与 HCNetSDK 布防同时开会重复入库，默认关，作布防失败时的兜底
+    isapi_alert_enable: bool = False
+    # 告警归属的设备 ID（报文没有 deviceID 时用）。现场盒子常用 box001
+    isapi_device_id: str = "box001"
+    # HCNetSDK 设备网路 SDK：Login + SetupAlarmChan，收 COMM_ISAPI_ALARM
+    hcnetsdk_enable: bool = True
+    hcnetsdk_dir: str = str(PROJECT_ROOT / "lib" / "hcnetsdk")
+    # 登录模式：0=私有协议 1=ISAPI（默认，收 COMM_ISAPI_ALARM）2=自适应
+    hcnetsdk_login_mode: int = 1
+    # 登录端口。ISAPI 模式请用 HTTP 口（通常与 isapi_port 一致=80）；
+    # 8000 是私有协议口，ISAPI 登录会失败 err=9。
+    hcnetsdk_port: int = 80
 
     # ★★ 抓取前**延迟**多少秒（等设备把后段录完）
     #
@@ -367,11 +356,6 @@ class Settings(BaseSettings):
     # ⚠️ 永远不要再配成 "*"：开放 API 不鉴权 + CORS 全开 =
     #   任何内网用户开一个网页就能把告警数据全部拉走。
     cors_origins: str = ""
-
-    # ---- ISUP SDK ----
-    # 是否在服务启动时拉起 ISUP 监听。用 MockProvider 开发前端时可以先关掉，
-    # 因为 SDK 是 Windows DLL，且需要设备真实上线。
-    enable_isup_sdk: bool = True
 
     # ---- ★ 设备在线判定 ----
     # 兜底窗口（分钟）：online=1 但 last_seen 超过这个时长，按离线展示。
@@ -453,11 +437,6 @@ def resolve_image_retention_days(s: "Settings | None" = None) -> int:
     """图片保留天数。image_retention_days=0 时回退 media_retention_days。"""
     s = s or get_settings()
     return int(s.image_retention_days or s.media_retention_days or 0)
-
-
-@lru_cache
-def get_isup_conf() -> dict[str, Any]:
-    return load_isup_conf()
 
 
 def ensure_dirs() -> None:

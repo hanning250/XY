@@ -19,7 +19,7 @@ from __future__ import annotations
 import contextlib
 import logging
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from server.config import PROJECT_ROOT
@@ -76,6 +76,7 @@ def get_alarm_snapshot(alarm_id: str) -> tuple[str, int, str] | None:
         created_at = created_at.isoformat(sep=" ")
 
     base = _pick_capture_time(str(alarm_time or ""), str(created_at or ""))
+    base = _correct_utc_naive_wall(base, str(created_at or ""))
     return (
         str(row["device_id"] or ""),
         int(row["channel"] or 1),
@@ -85,6 +86,31 @@ def get_alarm_snapshot(alarm_id: str) -> tuple[str, int, str] | None:
 
 # 设备时钟与服务器偏差超过这个秒数时的处理 —— 见下面 _pick_capture_time
 _CLOCK_SKEW_TOLERANCE = 5.0
+
+
+def _correct_utc_naive_wall(alarm_time: str, created_at: str) -> str:
+    """纠正「设备 +08:00 被按 UTC astimezone 存成早上」的历史数据。
+
+    服务器时区是 UTC 时：dateTime=15:00+08:00 → 库里 07:00，created_at 仍是 15:00。
+    两者差约 8 小时就把 alarm_time 加回 8 小时，按设备 OSD 去抓。
+    """
+    from server.services.timeutil import parse_any
+
+    at = parse_any(alarm_time)
+    ct = parse_any(created_at)
+    if at is None:
+        return alarm_time
+    if ct is None:
+        return at.strftime("%Y-%m-%d %H:%M:%S")
+    skew = (ct - at).total_seconds()
+    if 7 * 3600 <= skew <= 9 * 3600:
+        fixed = at + timedelta(hours=8)
+        logger.info(
+            "抓取时间纠正 UTC 墙钟 %s → 本地 %s（created_at=%s）",
+            at, fixed, ct,
+        )
+        return fixed.strftime("%Y-%m-%d %H:%M:%S")
+    return at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 def _pick_capture_time(alarm_time: str, created_at: str) -> str:
@@ -192,21 +218,6 @@ def set_playback_starting(alarm_id: str) -> bool:
     return _update(alarm_id, "starting", None, None, None)
 
 
-def touch_status(alarm_id: str, status: str) -> bool:
-    """仅改状态（如 starting）。"""
-    if not DB_PATH.is_file():
-        return False
-    try:
-        with _connect() as conn:
-            cur = conn.execute(
-                "UPDATE alarm SET video_status = ? WHERE id = ?", (status, alarm_id)
-            )
-            return cur.rowcount > 0
-    except sqlite3.Error:
-        logger.exception("更新状态失败 alarm=%s", alarm_id)
-        return False
-
-
 def delete_alarm_files(alarm_id: str, *, file_paths: list[str]) -> tuple[int, int]:
     """删除一条告警关联的磁盘文件。
 
@@ -222,19 +233,64 @@ def delete_alarm_files(alarm_id: str, *, file_paths: list[str]) -> tuple[int, in
     bad = 0
 
     candidates: list[Path] = [PROJECT_ROOT / p for p in file_paths if p]
-    # 抓取回放的原始 PS / 转码产物（文件名就是 alarm_id）
-    candidates.append(PROJECT_ROOT / "media" / "video" / f"{alarm_id}.mp4")
-    candidates.append(PROJECT_ROOT / "data" / "playback_raw" / f"{alarm_id}.mpegps")
+    # 抓取回放的原始 PS / 转码产物 / HLS（文件名或目录就是 alarm_id）
+    video_dir = PROJECT_ROOT / "media" / "video"
+    raw_dir = PROJECT_ROOT / "data" / "playback_raw"
+    candidates.append(video_dir / f"{alarm_id}.mp4")
+    candidates.append(raw_dir / f"{alarm_id}.mpegps")
+    candidates.append(PROJECT_ROOT / "media" / "hls" / alarm_id)
+    if video_dir.is_dir():
+        candidates.extend(video_dir.glob(f"{alarm_id}.*"))
+    if raw_dir.is_dir():
+        candidates.extend(raw_dir.glob(f"{alarm_id}.*"))
 
     for path in _dedupe_paths(candidates):
+        if _path_still_referenced(path):
+            logger.info("媒体仍被其它告警引用，跳过删除: %s", path)
+            continue
         try:
             if path.is_file():
                 path.unlink()
+                ok += 1
+            elif path.is_dir():
+                import shutil
+
+                shutil.rmtree(path)
                 ok += 1
         except OSError as exc:
             logger.warning("删除文件失败 %s: %s", path, exc)
             bad += 1
     return ok, bad
+
+
+def _path_still_referenced(path: Path) -> bool:
+    """同分钟合并后多条告警会共用一个 mp4；其它记录还在时不能真删文件。"""
+    if not DB_PATH.is_file():
+        return False
+    try:
+        rel = path.resolve().relative_to(PROJECT_ROOT.resolve()).as_posix()
+    except ValueError:
+        return False
+    like = f"%{rel}%"
+    try:
+        with _connect() as conn:
+            row = conn.execute(
+                "SELECT 1 FROM alarm_image WHERE file_path = ? LIMIT 1", (rel,)
+            ).fetchone()
+            if row:
+                return True
+            row = conn.execute(
+                "SELECT 1 FROM alarm WHERE video_url LIKE ? LIMIT 1", (like,)
+            ).fetchone()
+            if row:
+                return True
+            row = conn.execute(
+                "SELECT 1 FROM pending_image WHERE file_path = ? LIMIT 1", (rel,)
+            ).fetchone()
+            return bool(row)
+    except sqlite3.Error:
+        logger.exception("检查媒体引用失败: %s", rel)
+        return False
 
 
 def _dedupe_paths(paths: list[Path]) -> list[Path]:
@@ -262,3 +318,33 @@ def _dedupe_paths(paths: list[Path]) -> list[Path]:
 
 def now_utc_naive() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+_MEDIA_SUFFIX = {".jpg", ".jpeg", ".png", ".mp4", ".mpegps", ".ps", ".ts", ".m3u8"}
+
+
+def purge_orphan_media_dirs() -> int:
+    """告警记录已全部删光时，清掉 storage / 录像 / 原始流里残留文件。"""
+    import shutil
+
+    n = 0
+    dirs = [
+        PROJECT_ROOT / "storage",
+        PROJECT_ROOT / "media" / "video",
+        PROJECT_ROOT / "data" / "playback_raw",
+        PROJECT_ROOT / "media" / "hls",
+    ]
+    for d in dirs:
+        if not d.is_dir():
+            continue
+        for path in d.rglob("*"):
+            try:
+                if path.is_file() and path.suffix.lower() in _MEDIA_SUFFIX:
+                    path.unlink()
+                    n += 1
+                elif path.is_dir() and d.name == "hls" and path != d:
+                    shutil.rmtree(path)
+                    n += 1
+            except OSError as exc:
+                logger.warning("清理残留媒体失败 %s: %s", path, exc)
+    return n

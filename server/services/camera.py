@@ -17,7 +17,7 @@
 ## 数据来源与优先级
 
     ① Channel 表按 (last_device_id, channel_id) 精确匹配 —— 实测覆盖 1306/1307
-    ② 匹配不上时退回报文里的 childDevID / channelName（调试模拟数据走这条）
+    ② 匹配不上时退回报文里的 childDevID / channelName
     ③ 都没有 → None（前端/甲方自己按 device_id+channel 处理）
 
 ## 为什么批量查

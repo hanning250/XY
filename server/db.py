@@ -117,6 +117,8 @@ def _sqlite_on_connect(dbapi_conn, _record) -> None:  # noqa: ANN001
         cur.execute("PRAGMA temp_store=MEMORY")
         # 死锁兜底：写冲突时最多等 30 秒再报错（与 connect_args 的 timeout 呼应）
         cur.execute("PRAGMA busy_timeout=30000")
+        # 每条连接都要开：否则 DELETE alarm 不会级联删 alarm_image / video_session
+        cur.execute("PRAGMA foreign_keys=ON")
         cur.close()
     except Exception:  # pragma: no cover - 驱动差异时不影响主流程
         pass

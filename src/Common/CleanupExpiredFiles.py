@@ -33,7 +33,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from pathlib import Path
 
-# 与 HCISUPCMS.target_dir 一致：项目根目录
+# 项目根目录（src/Common/ → 上两级）
 _PROJECT_ROOT = os.path.abspath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")
 )

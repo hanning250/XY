@@ -92,10 +92,6 @@ class JwtProvider:
         return await principal_from_claims(claims)
 
 
-def jwt_enabled() -> bool:
-    return get_settings().auth_mode.lower() == "jwt"
-
-
 # --------------------------------------------------------------------------
 # ★ 密码版本号（2026-XX：任何一方改密后旧 token 立即失效）
 #

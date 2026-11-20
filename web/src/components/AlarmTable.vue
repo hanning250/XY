@@ -12,7 +12,8 @@
  * 数据来源：GET /api/alarms（字段见 AlarmBrief）
  */
 import { computed, onMounted, ref } from 'vue'
-import { Picture, Refresh, Search, View } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { Delete, Picture, Refresh, Search, View } from '@element-plus/icons-vue'
 import { adminApi, alarmApi, withToken } from '@/api'
 import { alarmTypeText, useAlarmStore } from '@/stores/alarm'
 import { useDeviceStore } from '@/stores/device'
@@ -36,8 +37,69 @@ const store = useAlarmStore()
 const deviceStore = useDeviceStore()
 
 const panelRef = ref<HTMLElement | null>(null)
+const tableRef = ref()
 const workshops = ref<Array<{ code: string; name: string }>>([])
 const ruleNames = ref<string[]>([])
+const selected = ref<AlarmBrief[]>([])
+const deleting = ref(false)
+
+function onSelect(rows: AlarmBrief[]) {
+  selected.value = rows
+}
+
+async function deleteSelected() {
+  if (!selected.value.length) return
+  const { ElMessageBox } = await import('element-plus')
+  try {
+    await ElMessageBox.confirm(
+      `确定删除选中的 ${selected.value.length} 条报警吗？关联的图片和视频会从磁盘一并删除，不可恢复。`,
+      '批量删除',
+      { type: 'warning', confirmButtonText: '删除', cancelButtonText: '取消' },
+    )
+  } catch {
+    return
+  }
+  deleting.value = true
+  try {
+    const n = await store.removeMany(selected.value.map((a) => a.id))
+    selected.value = []
+    tableRef.value?.clearSelection?.()
+    await store.fetchList()
+    await store.fetchStats()
+    ElMessage.success(`已删除 ${n.length} 条`)
+  } catch (e) {
+    ElMessage.error((e as Error)?.message || '删除失败')
+  } finally {
+    deleting.value = false
+  }
+}
+
+async function deleteAll() {
+  if (!store.total) return
+  const { ElMessageBox } = await import('element-plus')
+  try {
+    await ElMessageBox.confirm(
+      `确定删除当前筛选下的 ${store.total} 条报警吗？数据库记录、抓拍图、录像都会从磁盘真删，不可恢复。`,
+      '清空全部报警',
+      { type: 'warning', confirmButtonText: '全部删除', cancelButtonText: '取消' },
+    )
+  } catch {
+    return
+  }
+  deleting.value = true
+  try {
+    const n = await store.removeAll()
+    selected.value = []
+    tableRef.value?.clearSelection?.()
+    await store.fetchList()
+    await store.fetchStats()
+    ElMessage.success(`已删除 ${n.length} 条`)
+  } catch (e) {
+    ElMessage.error((e as Error)?.message || '删除失败')
+  } finally {
+    deleting.value = false
+  }
+}
 
 onMounted(async () => {
   try {
@@ -221,12 +283,32 @@ function reset() {
       </div>
 
       <div class="t-right">
+        <el-button
+          type="danger"
+          plain
+          :icon="Delete"
+          :disabled="!selected.length"
+          :loading="deleting"
+          @click="deleteSelected"
+        >
+          删除所选{{ selected.length ? ` (${selected.length})` : '' }}
+        </el-button>
+        <el-button
+          type="danger"
+          :icon="Delete"
+          :disabled="!store.total"
+          :loading="deleting"
+          @click="deleteAll"
+        >
+          清空全部
+        </el-button>
         <span class="count">共 <b>{{ store.total }}</b> 条</span>
       </div>
     </div>
 
     <!-- 表格 -->
     <el-table
+      ref="tableRef"
       v-loading="props.loading"
       :data="props.alarms"
       style="width: 100%"
@@ -234,9 +316,11 @@ function reset() {
       row-key="id"
       :row-class-name="rowClass"
       :row-style="{ cursor: 'pointer' }"
+      @selection-change="onSelect"
       @row-click="(row: AlarmBrief) => emit('focus', row)"
       @row-dblclick="(row: AlarmBrief) => emit('open', row)"
     >
+      <el-table-column type="selection" width="42" />
       <el-table-column label="时间" width="120">
         <template #default="{ row }">
           <div class="time-cell">
@@ -381,7 +465,13 @@ function reset() {
   background: linear-gradient(to bottom, var(--surface-2), var(--surface));
 }
 .t-left { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
-.t-right { display: flex; align-items: center; gap: 12px; }
+.t-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
 .tilde { color: var(--text-3); font-size: var(--fs-cap); }
 .count { font-size: var(--fs-cap); color: var(--text-2); font-weight: 500; }
 .count b { color: var(--text); font-size: var(--fs-md); font-weight: 800; font-variant-numeric: tabular-nums; }

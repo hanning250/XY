@@ -85,8 +85,7 @@ http.interceptors.response.use(
     const status = error?.response?.status
     const detail = error?.response?.data?.detail
 
-    // ★ 探测类请求（如 devApi.available）失败不弹提示：
-    //   它是能力探测，404/405 都是预期结果，不该打扰用户。
+    // ★ 探测类请求失败不弹提示：能力探测的 404/405 是预期结果，不该打扰用户。
     if (error?.config?.headers?.['X-Silent-Probe']) {
       return Promise.reject(error)
     }
@@ -162,9 +161,21 @@ export const alarmApi = {
   remove(alarmId: string) {
     return http.delete(`/api/alarms/${alarmId}`).then((r) => r.data)
   },
-  /** ★ 批量删除 */
+  /** ★ 批量删除（连图片/视频磁盘文件） */
   batchRemove(ids: string[]) {
-    return http.post('/api/alarms/batch-delete', { ids }).then((r) => r.data)
+    return http
+      .post('/api/alarms/batch-delete', { ids }, { timeout: 120000 })
+      .then((r) => r.data)
+  },
+  /** ★ 按当前筛选清空告警（连图片/视频磁盘文件） */
+  batchRemoveAll(filters: Record<string, unknown> = {}) {
+    return http
+      .post(
+        '/api/alarms/batch-delete',
+        { ids: [], all: true, ...filters },
+        { timeout: 120000 },
+      )
+      .then((r) => r.data)
   },
   /** ★ 统计（今日条数）—— 纯展示看板只用到 today */
   stats() {
@@ -192,44 +203,9 @@ export const deviceApi = {
   list() {
     return http.get('/api/devices').then((r) => r.data)
   },
-  /** 实况抓拍 JPEG（Blob），前端定时刷新形成近似实时画面 */
-  liveSnapshot(channel = 1, stream = 1) {
-    return http
-      .get('/api/devices/live-snapshot', {
-        params: { channel, stream },
-        responseType: 'blob',
-      })
-      .then((r) => r.data as Blob)
-  },
   /** ★ 通道列表（按车间隔离；子账号只看到本车间的摄像头） */
   channels() {
     return http.get('/api/devices/channels').then((r) => r.data)
-  },
-}
-
-/**
- * ★ 媒体清理：由使用者指定时段删除。
- *   preview 先看有多少，cleanup 默认 dry_run=true 只预演。
- */
-export const mediaApi = {
-  stats() {
-    return http.get('/api/media/cleanup/stats').then((r) => r.data)
-  },
-  preview(start: string, end: string) {
-    return http.post('/api/media/cleanup/preview', { start, end }).then((r) => r.data)
-  },
-  cleanup(body: {
-    start: string
-    end: string
-    categories?: string[]
-    dry_run?: boolean
-  }) {
-    return http.post('/api/media/cleanup', body).then((r) => r.data)
-  },
-  cleanupByRetention(dryRun = true) {
-    return http
-      .post('/api/media/cleanup/retention', null, { params: { dry_run: dryRun } })
-      .then((r) => r.data)
   },
 }
 
@@ -289,12 +265,6 @@ export const adminApi = {
       .get('/api/admin/channels', { params: status ? { status } : {} })
       .then((r) => r.data)
   },
-  /** ★ 通道样本图（看画面认车间） */
-  channelSamples(channelId: number, limit = 3) {
-    return http
-      .get(`/api/admin/channels/${channelId}/samples`, { params: { limit } })
-      .then((r) => r.data?.data?.samples ?? [])
-  },
   /** ★ 把通道指派给车间（后端会自动回填历史告警） */
   assignChannel(channelId: number, workshopCode: string | null, displayName = '') {
     return http
@@ -338,10 +308,6 @@ export const adminApi = {
   deleteUser(userId: number) {
     return http.delete(`/api/admin/users/${userId}`).then((r) => r.data)
   },
-  /** 待配对图片队列（串图风险监控） */
-  pendingStats() {
-    return http.get('/api/admin/pending-stats').then((r) => r.data)
-  },
 }
 
 // ---------------------------------------------------------------- ★ 软件授权
@@ -353,47 +319,5 @@ export const licenseApi = {
   /** 用授权码续期（仅管理员；后端同样校验 admin） */
   renew(code: string) {
     return http.post('/api/license/renew', { code }).then((r) => r.data)
-  },
-}
-
-// ---------------------------------------------------------------- 调试（仅 debug 模式）
-/**
- * ★ 模拟一条报警（仅 ISUP_DEBUG=true 时后端才注册该路由）。
- * 走的是与设备上报同一条落库 + WS 推送链路，前端表现完全一致，
- * 用于现场报警稀疏时验证值守页/大图/推送。
- */
-export const devApi = {
-  simulateAlarm(params: { workshop?: string; device_id?: string; channel?: number } = {}) {
-    return http.post('/api/dev/simulate-alarm', null, { params }).then((r) => r.data)
-  },
-  /**
-   * ★ 探测调试接口是否可用（交付机上不可用 → 隐藏按钮）。
-   *
-   * 实现要点：带 `probe=1` 发一个 **OPTIONS 预检**——
-   *   · 路由存在 → 405（方法不允许）或 200
-   *   · 路由不存在 → 404
-   * 这样不会真的创建报警，也不会触发参数校验错误
-   * （早期版本用 channel=-1 探测，会把 422 的数组 detail 弹成
-   *  "[object Object]" 提示，属于设计失误）。
-   */
-  async available(): Promise<boolean> {
-    try {
-      const r = await http.options('/api/dev/simulate-alarm', {
-        params: { probe: 1 },
-        headers: { 'X-Silent-Probe': '1' },
-      })
-      return r.status !== 404
-    } catch (e: unknown) {
-      const st = (e as { response?: { status?: number } })?.response?.status
-      // 404 = 路由不存在（交付机）；405/422/401 都说明路由在
-      return st !== 404
-    }
-  },
-}
-
-// ---------------------------------------------------------------- 开放 API（联调用）
-export const openApi = {
-  listAlarms(params: Record<string, unknown> = {}) {
-    return http.get('/openapi/v1/alarms', { params }).then((r) => r.data)
   },
 }

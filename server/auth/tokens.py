@@ -27,7 +27,6 @@ import hashlib
 import hmac
 import json
 import os
-import secrets
 import time
 from typing import Any
 
@@ -137,8 +136,3 @@ def decode_token(token: str, *, secret: str, leeway: int = 0) -> dict[str, Any]:
         raise TokenError("已过期")
 
     return payload
-
-
-def random_secret(nbytes: int = 32) -> str:
-    """生成一个强随机密钥（用于初始化配置）。"""
-    return secrets.token_urlsafe(nbytes)

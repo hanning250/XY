@@ -67,33 +67,20 @@ async def list_channels_scoped(
 # --------------------------------------------------------------------------
 @router.get(
     "/live",
-    summary="★★ 实时在线设备（直接读 SDK 内存表，不含历史记录）",
+    summary="★★ 实时在线设备（数据库登记，不含历史记录）",
 )
 async def list_live_devices(
     db: AsyncSession = Depends(get_session),
     principal: Principal = Depends(require("device:read")),
 ):
-    """此刻真正连着平台的设备列表。
-
-    数据来源：SDK 的 `glo.deviceUserMap`（注册/注销回调直接维护）。
-    不依赖数据库、不依赖设备 IP。
+    """当前设备表（数据库登记 + 在线标记）。
 
     返回字段：
-      · device_id   设备序列号/ID（SDK 注册时用的那个）
-      · user_id     SDK 的登录句柄（>0 表示会话已建立）
-      · in_db       数据库里是否有这台设备（用于提示"新设备，未登记"）
-      · channels    该设备下已登记的通道数
-      · last_alarm  最近一次报警时间（便于确认数据在流）
+      · device_id / ip / channels / last_alarm
     """
     from sqlalchemy import func, select
 
     from server.models import Alarm, Channel, Device
-    from server.services.sdk_devices import online_snapshot, sdk_available
-
-    ok = sdk_available()
-    snapshot = online_snapshot() if ok else {}
-
-    # 数据库辅助信息（不是判定依据，只是展示用）
     db_devices = {
         d.device_id: d
         for d in (await db.execute(select(Device))).scalars().all()
@@ -118,14 +105,14 @@ async def list_live_devices(
     )
 
     out = []
-    for device_id, user_id in sorted(snapshot.items()):
-        d = db_devices.get(device_id)
+    for device_id, d in sorted(db_devices.items()):
         out.append(
             {
                 "device_id": device_id,
-                "user_id": user_id,
-                "in_db": d is not None,
-                "ip": getattr(d, "ip", None) if d else None,
+                "user_id": None,
+                "in_db": True,
+                "online": bool(getattr(d, "online", False)),
+                "ip": getattr(d, "ip", None),
                 "channels": int(ch_counts.get(device_id, 0) or 0),
                 "last_alarm": (
                     last_alarms.get(device_id).isoformat()
@@ -136,57 +123,8 @@ async def list_live_devices(
         )
 
     return {
-        "sdk_available": ok,
         "count": len(out),
-        # ★ 没有 SDK 时明确告知，避免前端把"0 台"误解成"全部离线"
-        "note": (
-            "" if ok else "SDK 未启动（无 SDK 模式），无法获取实时设备表"
-        ),
+        "note": "设备列表来自数据库（HCNet/ISAPI）",
         "devices": out,
     }
 
-
-@router.get(
-    "/live-snapshot",
-    summary="★ 实况抓拍 JPEG（定时刷新近似实时画面）",
-)
-async def live_snapshot(
-    channel: int = 1,
-    stream: int = 1,
-    _: Principal = Depends(require("device:read")),
-):
-    """从边缘盒子 ISAPI 拉一路当前画面，供实时监控页轮询显示。
-
-    一期不做连续视频流（浏览器无法直接吃 PS/RTSP）；
-    前端每 1~2 秒请求一次即可形成近似实况。
-    """
-    from fastapi import HTTPException
-    from fastapi.responses import Response
-
-    from server.config import get_settings
-    from server.services.isapi_client import IsapiError, get_client
-
-    settings = get_settings()
-    host = getattr(settings, "isapi_host", "") or ""
-    password = getattr(settings, "isapi_password", "") or ""
-    if not host or not password:
-        raise HTTPException(status_code=503, detail="未配置 ISAPI（ISUP_ISAPI_HOST/PASSWORD）")
-
-    client = get_client(
-        host,
-        int(getattr(settings, "isapi_port", 80) or 80),
-        getattr(settings, "isapi_username", "admin") or "admin",
-        password,
-    )
-    try:
-        jpeg = client.channel_snapshot(channel, stream=stream)
-    except IsapiError as exc:
-        raise HTTPException(status_code=502, detail=f"抓拍失败: {exc}") from exc
-    except OSError as exc:
-        raise HTTPException(status_code=502, detail=f"连接设备失败: {exc}") from exc
-
-    return Response(
-        content=jpeg,
-        media_type="image/jpeg",
-        headers={"Cache-Control": "no-store"},
-    )

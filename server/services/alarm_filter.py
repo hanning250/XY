@@ -76,9 +76,3 @@ def get_filter() -> AlarmFilter:
     if _filter is None:
         _filter = AlarmFilter()
     return _filter
-
-
-def reset_filter() -> None:
-    """配置变更后重置（测试用）。"""
-    global _filter
-    _filter = None

@@ -22,7 +22,7 @@ import {
   RefreshRight,
   VideoCamera,
 } from '@element-plus/icons-vue'
-import { withToken, devApi, deviceApi } from '@/api'
+import { withToken } from '@/api'
 import { alarmTypeText, useAlarmStore } from '@/stores/alarm'
 import type { AlarmBrief } from '@/types'
 
@@ -39,75 +39,6 @@ const follow = ref(true)
 /** 大图加载状态 */
 const imgLoading = ref(false)
 const imgFailed = ref(false)
-
-/** 画面模式：alarm=报警抓拍，live=摄像头实况（ISAPI 定时抓拍） */
-const stageMode = ref<'alarm' | 'live'>('alarm')
-const liveChannel = ref(1)
-const liveUrl = ref('')
-const liveError = ref('')
-let liveTimer: number | undefined
-let liveObjectUrl: string | undefined
-
-async function refreshLive() {
-  try {
-    const blob = await deviceApi.liveSnapshot(liveChannel.value, 1)
-    if (!(blob instanceof Blob) || blob.size < 100 || blob.type.includes('json')) {
-      // 失败时后端可能仍以 JSON 错误体返回（axios responseType=blob）
-      const text = blob instanceof Blob ? await blob.text() : ''
-      try {
-        const j = JSON.parse(text) as { detail?: string }
-        liveError.value = j.detail || '实况抓拍失败'
-      } catch {
-        liveError.value = '实况抓拍失败'
-      }
-      return
-    }
-    if (liveObjectUrl) URL.revokeObjectURL(liveObjectUrl)
-    liveObjectUrl = URL.createObjectURL(blob)
-    liveUrl.value = liveObjectUrl
-    liveError.value = ''
-  } catch (e: unknown) {
-    const err = e as { response?: { data?: Blob | { detail?: string } }; message?: string }
-    const data = err?.response?.data
-    if (data instanceof Blob) {
-      try {
-        const j = JSON.parse(await data.text()) as { detail?: string }
-        liveError.value = j.detail || '实况抓拍失败'
-        return
-      } catch { /* fallthrough */ }
-    }
-    liveError.value =
-      (typeof data === 'object' && data && 'detail' in data && data.detail) ||
-      err?.message ||
-      '实况抓拍失败'
-  }
-}
-
-function startLive() {
-  stopLive()
-  void refreshLive()
-  liveTimer = window.setInterval(() => void refreshLive(), 1500)
-}
-
-function stopLive() {
-  if (liveTimer !== undefined) {
-    window.clearInterval(liveTimer)
-    liveTimer = undefined
-  }
-  if (liveObjectUrl) {
-    URL.revokeObjectURL(liveObjectUrl)
-    liveObjectUrl = undefined
-  }
-  liveUrl.value = ''
-}
-
-watch(stageMode, (m) => {
-  if (m === 'live') startLive()
-  else stopLive()
-})
-watch(liveChannel, () => {
-  if (stageMode.value === 'live') startLive()
-})
 
 const list = computed(() => store.items)
 
@@ -182,23 +113,6 @@ async function grabVideo() {
   }
 }
 
-/** ★ 模拟一条报警（仅调试模式可见）：现场报警稀疏时用于演示/自测 */
-const devAvailable = ref(false)
-const simulating = ref(false)
-
-async function simulate() {
-  if (simulating.value) return
-  simulating.value = true
-  try {
-    await devApi.simulateAlarm({ device_id: 'sim-box' })
-    // 新报警由 WebSocket 推送到达，无需手动插列表
-  } catch {
-    /* 拦截器已提示（交付机上该路由不存在 → 404） */
-  } finally {
-    simulating.value = false
-  }
-}
-
 function onKey(e: KeyboardEvent) {
   const target = e.target as HTMLElement | null
   // 输入框里打字时不劫持按键
@@ -217,12 +131,9 @@ function onKey(e: KeyboardEvent) {
 onMounted(() => {
   if (list.value.length) current.value = list.value[0]
   window.addEventListener('keydown', onKey)
-  // 探测调试接口是否存在（交付机没有 → 隐藏「模拟报警」按钮）
-  void devApi.available().then((ok) => (devAvailable.value = ok))
 })
 
 onUnmounted(() => {
-  stopLive()
   window.removeEventListener('keydown', onKey)
 })
 
@@ -300,7 +211,7 @@ void tick
         <div class="fh-top">
           <span class="dot-live" :class="{ off: props.connected === false }" />
           <span class="fh-title">值守中</span>
-          <span class="fh-sub">{{ props.connected === false ? '推送断开' : '实时接收' }}</span>
+          <span class="fh-sub">{{ props.connected === false ? '推送重连中' : '实时接收' }}</span>
         </div>
         <div class="fh-stat">
           <span>今日 <b>{{ store.stats.today }}</b></span>
@@ -321,15 +232,6 @@ void tick
           {{ follow ? '自动跟随' : '已暂停' }}
         </button>
         <button class="tool" title="手动回到最新" @click="backToLatest">最新一条</button>
-        <!-- 仅调试模式出现：现场报警稀疏，演示/自测时手动造一条 -->
-        <button
-          v-if="devAvailable"
-          class="tool sim"
-          title="造一条模拟报警（走真实落库与推送链路）"
-          @click="simulate"
-        >
-          模拟报警
-        </button>
       </div>
 
       <div class="feed-list">
@@ -383,42 +285,9 @@ void tick
       </div>
     </aside>
 
-    <!-- ============ 右：大图 / 实况 ============ -->
+    <!-- ============ 右：报警抓拍大图 ============ -->
     <main class="stage">
-      <div class="stage-toolbar">
-        <button type="button" class="mode" :class="{ on: stageMode === 'alarm' }" @click="stageMode = 'alarm'">报警抓拍</button>
-        <button type="button" class="mode" :class="{ on: stageMode === 'live' }" @click="stageMode = 'live'">实时画面</button>
-        <template v-if="stageMode === 'live'">
-          <label class="ch">
-            通道
-            <select v-model.number="liveChannel">
-              <option :value="1">1</option>
-              <option :value="2">2</option>
-              <option :value="3">3</option>
-              <option :value="4">4</option>
-            </select>
-          </label>
-          <button type="button" class="mode" @click="refreshLive">刷新</button>
-        </template>
-      </div>
-
-      <!-- 实况：ISAPI 定时抓拍 -->
-      <template v-if="stageMode === 'live'">
-        <div class="shot live-shot">
-          <img v-if="liveUrl" :src="liveUrl" alt="实时画面" />
-          <div v-else class="shot-empty">
-            <div class="se-ico"><el-icon :size="38"><VideoCamera /></el-icon></div>
-            <div class="se-txt">{{ liveError || '正在连接实况…' }}</div>
-            <div class="se-sub">约每 1.5 秒刷新一帧（ISAPI 抓拍）</div>
-          </div>
-          <div class="shot-tl">
-            <span class="badge-live">实时画面</span>
-            <span class="badge-time">通道 {{ liveChannel }}</span>
-          </div>
-        </div>
-      </template>
-
-      <template v-else-if="current">
+      <template v-if="current">
         <!-- 图区 -->
         <div class="shot" :class="{ fresh: store.isFlashing(current.id) }">
           <img
@@ -533,44 +402,6 @@ export default { name: 'LiveMonitorView' }
   padding: 14px 18px;
   box-sizing: border-box;
 }
-.stage-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-.stage-toolbar .mode {
-  border: 1px solid var(--border-2);
-  background: var(--surface);
-  color: var(--text-2);
-  border-radius: 6px;
-  padding: 4px 12px;
-  font-size: var(--fs-cap);
-  font-weight: 600;
-  cursor: pointer;
-}
-.stage-toolbar .mode.on {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: #fff;
-}
-.stage-toolbar .ch {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--fs-cap);
-  color: var(--text-2);
-  margin-left: 4px;
-}
-.stage-toolbar .ch select {
-  height: 28px;
-  border-radius: 6px;
-  border: 1px solid var(--border-2);
-  background: var(--surface);
-  color: var(--text);
-  padding: 0 6px;
-}
-
 /* ============ 左：报警流 ============ */
 .feed {
   display: flex;
@@ -617,9 +448,6 @@ export default { name: 'LiveMonitorView' }
 }
 .tool:hover { color: var(--text); border-color: var(--border-strong); }
 .tool.on { color: var(--ok); border-color: rgba(var(--ok-rgb), 0.4); background: rgba(var(--ok-rgb), 0.1); }
-.tool.sim { color: var(--warn); border-color: rgba(var(--warn-rgb), 0.35); flex: 0 0 auto; }
-.tool.sim:hover { color: var(--warn); border-color: rgba(var(--warn-rgb), 0.6); }
-
 .feed-list { flex: 1; overflow-y: auto; min-height: 0; }
 .feed-empty { padding: 24px 12px; text-align: center; color: var(--text-3); font-size: var(--fs-micro); }
 
@@ -724,13 +552,6 @@ export default { name: 'LiveMonitorView' }
   min-height: 0;
   min-width: 0;
 }
-.live-shot img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  background: #0b1220;
-}
-
 .shot {
   position: relative;
   flex: 1;

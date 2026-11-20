@@ -48,7 +48,7 @@ async def mark_offline(db: AsyncSession, *, device_id: str) -> None:
 async def mark_all_offline(db: AsyncSession) -> int:
     """★ 服务启动时把所有设备置为离线。
 
-    为什么：进程重启后，设备与**旧进程**的 ISUP 连接必然已断，
+    为什么：进程重启后，设备与**旧进程**的连接必然已断，
     但 device 表里残留的 online=1 不会被纠正 —— 新进程收不到
     任何离线事件（设备掉线发生在重启之前）。
     设备重新注册时会自动翻回在线，所以启动清零是安全的。
@@ -77,7 +77,7 @@ async def mark_all_offline(db: AsyncSession) -> int:
 async def _is_freshly_seen(dev: Device) -> bool:
     """★ online 标记可信度兜底。
 
-    主逻辑：online 标记由 SDK 注册/离线回调维护（已修好离线 ID 解析），
+    主逻辑：online 标记由 HCNet 登录/掉线维护，
     **以它为准**。
 
     兜底（ISUP 的离线事件是**尽力而为**的）：
@@ -217,85 +217,9 @@ async def count_devices(
 
 
 async def device_online_map(db: AsyncSession) -> dict[str, bool]:
-    """★ 统一的「设备 → 是否在线」判定表。
-
-    ## 判定顺序（2026-10-26 重做，四层证据）
-
-    原来的问题：完全依赖 SDK 的 `online` 标记。而 ISUP 的离线事件是
-    「尽力而为」——设备拔电、网络闪断、进程被强杀时，标记可能长时间
-    停在旧值，界面上就会显示错的在线状态。
-
-    ★★ 关键前提：**有些设备根本没有 IP**（NVR 转发、未填、动态分配），
-       所以「靠 IP 探测」不能作为唯一手段。必须有一套管用的、
-       不依赖 IP 的证据链。
-
-    现在按以下顺序判断，取第一个能给出明确结论的：
-
-      ① **SDK 在线设备表**（最强，且不需要 IP）
-         `glo.deviceUserMap = {device_id: lUserID}` 由 SDK 的
-         注册/注销回调直接维护，是「设备此刻是否连着平台」最准确的
-         证据。设备注册了就一定在表里，断开就从表里移除。
-         → 在表里 = 在线
-
-      ② **主动探测**（有 IP 时二次确认）
-         ①说在线、且设备有 IP → 探端口层 / ISAPI 复核
-         ①说离线，但有 IP 且探得到 → 说明 SDK 表滞后，按在线处理
-           （实测有设备在表外但 ISAPI 可达）
-
-      ③ **SDK online 标记**（无 IP 且 SDK 表不可用时）
-         退回数据库里由回调维护的标记。
-
-      ④ **last_seen 兜底**：标记为在线但 last_seen 超过
-         device_offline_after_minutes（默认 1 天）→ 判离线。
-         只防「进程被强杀导致离线事件彻底丢失」。
-
-    ★ 无 IP 的设备怎么显示：照样显示（设备管理页列出全部设备），
-      在线状态由 ① / ③ / ④ 判定 —— ①是主力，不需要 IP。
-    """
-    from server.services.sdk_devices import (
-        online_device_ids,
-        sdk_available,
-    )
-
+    """设备是否在线：数据库 online + last_seen 新鲜度（HCNet 登录/掉线会改标记）。"""
     rows = (await db.execute(select(Device))).scalars().all()
-
-    # ① SDK 在线表快照（一次取，避免每条都读）
-    sdk_ids: set[str] = online_device_ids() if sdk_available() else set()
-    sdk_ok = sdk_available()
-
-    out: dict[str, bool] = {}
-
-    for d in rows:
-        did = d.device_id
-
-        # ---- ① SDK 在线表是唯一的权威（2026-10-26 修正）----
-        #
-        # ★★★ 重要修正：不能再把「ISAPI 可达」当成在线证据。
-        #
-        #   实测场景（现场复现）：把所有设备从平台断开后，
-        #   设备本身还在网络上（ping/ISAPI 都通），但**没连平台**。
-        #   对平台来说这就是「不在线」——ISUP 连接断了，收不到报警、
-        #   抓不到视频。
-        #
-        #   原来把 ISAPI 可达判为在线，导致：
-        #     设备全断开后，前端仍显示 5 台在线（错的）
-        #
-        #   ISAPI 探测只在一种情况下有用：**确认设备彻底断电/断网**
-        #   （连 ISAPI 都不通 → 肯定离线）。它不能用来证明"在线"，
-        #   因为在线的前提是"连着平台"，那是 SDK 表说了算。
-        if sdk_ok:
-            if did in sdk_ids:
-                out[did] = True
-                continue
-            # SDK 表里没有 → 没连平台 → 离线
-            # （即使 ISAPI 可达也只能说明设备通网了，但没连平台）
-            out[did] = False
-            continue
-
-        # ---- ② SDK 不可用时才退回旧逻辑 ----
-        out[did] = await _is_freshly_seen(d)
-
-    return out
+    return {d.device_id: await _is_freshly_seen(d) for d in rows}
 
 
 async def list_channel_devices(
@@ -363,10 +287,6 @@ async def list_channel_devices(
     #   顺带把摄像头自己的 IP / 型号 也带出来，方便后续做绑定/自定义。
     from server.services.channel_status import fetch_channel_states
 
-    from server.services.sdk_devices import online_device_ids, sdk_available
-
-    sdk_ids = online_device_ids() if sdk_available() else set()
-
     # 按父设备分组，每台 NVR 只发一次请求
     nvr_channels: dict[str, list[int]] = {}
     for c, _online, _ls, _la in rows:
@@ -404,9 +324,6 @@ async def list_channel_devices(
 
         _fallback_used: set[str] = set()
         for did, chs in nvr_channels.items():
-            # 只有该 NVR 真的在线时才去查（省得对离线设备发请求）
-            if sdk_ids and did not in sdk_ids:
-                continue
             # ★ 优先设备自己的 IP；没有再回退配置里的默认地址
             host = dev_ips.get(did) or _cfg.isapi_host
             if not host:
@@ -456,9 +373,6 @@ async def list_channel_devices(
         elif real is not None and not getattr(real, "error", ""):
             # ★ 用摄像头（通道）自己的在线状态
             ch_online = bool(getattr(real, "online", False))
-        elif parent_id and parent_id in sdk_ids:
-            # 查不到真实状态时才借用父设备（NVR 在线）
-            ch_online = True
         else:
             # 退回原逻辑（标记 + last_seen + 业务活性）
             silence: float | None
